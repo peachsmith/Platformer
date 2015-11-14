@@ -146,22 +146,22 @@ int main(int argc, char** argv)
 					{
 						(*itr)->SetX((*itr)->GetX() - x_depth);
 
-//						if (player.GetX() < 140)
-//						{
-//							float x_overshoot = 140 - player.GetX();
-//							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
-//							{
-//								(*scr_itr)->SetX((*scr_itr)->GetX() + x_overshoot);
-//							}
-//						}
-//						else if (player.GetX() >= 320)
-//						{
-//							float x_overshoot = player.GetX() - 320;
-//							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
-//							{
-//								(*scr_itr)->SetX((*scr_itr)->GetX() - x_overshoot);
-//							}
-//						}
+						if (player.GetX() < 140)
+						{
+							float x_overshoot = 140 - player.GetX();
+							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
+							{
+								(*scr_itr)->SetX((*scr_itr)->GetX() + x_overshoot);
+							}
+						}
+						else if (player.GetX() >= 320)
+						{
+							float x_overshoot = player.GetX() - 320;
+							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
+							{
+								(*scr_itr)->SetX((*scr_itr)->GetX() - x_overshoot);
+							}
+						}
 
 						(*itr)->Collide((*itr2)->GetID());
 						if (x_depth)
