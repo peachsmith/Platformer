@@ -112,17 +112,17 @@ int main(int argc, char** argv)
 				player.SlowDown(); // slow to s stop
 
 			// temporary position reset
-			if (keys[peach::Z])
-			{
-				player.SetX(150);
-				player.SetY(250);
-			}
-
-			if (keys[peach::A])
-			{
-				player.SetX(150);
-				player.SetY(100);
-			}
+//			if (keys[peach::Z])
+//			{
+//				player.SetX(150);
+//				player.SetY(250);
+//			}
+//
+//			if (keys[peach::A])
+//			{
+//				player.SetX(150);
+//				player.SetY(100);
+//			}
 
 			// handle player jumping
 			if (keys[peach::SPACE] && !player.GetJumping())
@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 			else if (player.GetY() < 190)
 				player.SetY(190);
 
-			// scrolling
+			// horizontal scrolling
 			if ((player.GetX() == 320 || player.GetX() == 140) && player.GetXVel())
 			{
 				bool scroll_collision = false;
@@ -250,6 +250,7 @@ int main(int argc, char** argv)
 					player.SetXVel(0);
 				}
 			}
+			// vertical scrolling
 			if ((player.GetY() == 260 || player.GetY() == 190) && player.GetYVel())
 			{
 				bool scroll_collision = false;
@@ -277,6 +278,51 @@ int main(int argc, char** argv)
 					}
 					(*itr)->SetY((*itr)->GetY() + player.GetYVel());
 					player.SetYVel(0);
+				}
+			}
+			// move everything so the player is closer to the middle
+			if (player.GetY() != 230 && player.GetYVel() == 0)
+			{
+				float player_y = player.GetY();
+				if (player_y > 230)
+				{
+					if (player_y - 1 < 230)
+					{
+						for (itr = entities.begin(); itr != entities.end(); ++itr)
+							(*itr)->SetY((*itr)->GetY() - player.GetY() - 230);
+					}
+					else
+					{
+						for (itr = entities.begin(); itr != entities.end(); ++itr)
+							(*itr)->SetY((*itr)->GetY() - 1);
+					}
+					if (player.GetY() < 230)
+					{
+						player_y = player.GetY();
+						for (itr = entities.begin(); itr != entities.end(); ++itr)
+						{
+							(*itr)->SetY((*itr)->GetY() + 230 - player_y);
+						}
+					}
+				}
+				else if (player_y < 230)
+				{
+					if (player_y + 1 > 230)
+					{
+						for (itr = entities.begin(); itr != entities.end(); ++itr)
+							(*itr)->SetY((*itr)->GetY() + 230 - player.GetY());
+					}
+					else
+					{
+						for (itr = entities.begin(); itr != entities.end(); ++itr)
+							(*itr)->SetY((*itr)->GetY() + 1);
+					}
+					if (player.GetY() > 230)
+					{
+						player_y = player.GetY();
+						for (itr = entities.begin(); itr != entities.end(); ++itr)
+							(*itr)->SetY((*itr)->GetY() + 230 - player_y);
+					}
 				}
 			}
 		}
