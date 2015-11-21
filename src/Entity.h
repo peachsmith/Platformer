@@ -34,11 +34,12 @@ protected:
 	// jumping
 	bool jumping;
 
+	// sprite sheet
+	void* sprite_sheet;
+
 public:
 	Entity();
-	Entity(int id, bool alive, bool collidable, float x, float y, float x_vel,
-			float y_vel, float x_dir, float y_dir, float x_bound,
-			float y_bound);
+	Entity(int id, bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound);
 	virtual ~Entity();
 
 	void virtual UpdateX();
@@ -157,6 +158,16 @@ public:
 	void SetYBound(float y_bound)
 	{
 		Entity::y_bound = y_bound;
+	}
+
+	void* GetSpriteSheet()
+	{
+		return sprite_sheet;
+	}
+
+	void SetSpriteSheet(void* sprite_sheet)
+	{
+		Entity::sprite_sheet = sprite_sheet;
 	}
 
 };

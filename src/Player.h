@@ -10,9 +10,8 @@ class Player: public Entity
 {
 public:
 	Player();
-	Player(bool alive, bool collidable, float x, float y, float x_vel,
-			float y_vel, float x_dir, float y_dir, float x_bound,
-			float y_bound);
+	Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound);
+	Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound, void* sprite_sheet);
 	~Player();
 
 	void UpdateX();                      // override

@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 	display = al_create_display(500, 400);
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / FPS);
-	font = al_load_font("courbd.ttf", 18, 0);
+	font = al_load_font("res/courbd.ttf", 18, 0);
 
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
@@ -110,19 +110,6 @@ int main(int argc, char** argv)
 			}
 			else if ((!keys[peach::RIGHT] && !keys[peach::LEFT]) || (keys[peach::RIGHT] && keys[peach::LEFT]))
 				player.SlowDown(); // slow to s stop
-
-			// temporary position reset
-//			if (keys[peach::Z])
-//			{
-//				player.SetX(150);
-//				player.SetY(250);
-//			}
-//
-//			if (keys[peach::A])
-//			{
-//				player.SetX(150);
-//				player.SetY(100);
-//			}
 
 			// handle player jumping
 			if (keys[peach::SPACE] && !player.GetJumping())

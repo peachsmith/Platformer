@@ -10,9 +10,7 @@ class Terrain: public Entity
 {
 public:
 	Terrain();
-	Terrain(bool alive, bool collidable, float x, float y, float x_vel,
-			float y_vel, float x_dir, float y_dir, float x_bound,
-			float y_bound);
+	Terrain(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound);
 	~Terrain();
 
 	void Render();               // override

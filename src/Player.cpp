@@ -25,7 +25,30 @@ Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float
 	Player::y_bound = y_bound;
 
 	jumping = false;
+
+	sprite_sheet = 0;
 }
+
+Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound, void* sprite_sheet)
+{
+	SetID(peach::PLAYER);
+	SetAlive(alive);
+	SetCollidable(collidable);
+
+	Player::x = x;
+	Player::y = y;
+	Player::x_vel = x_vel;
+	Player::y_vel = y_vel;
+	Player::x_dir = x_dir;
+	Player::y_dir = y_dir;
+	Player::x_bound = x_bound;
+	Player::y_bound = y_bound;
+
+	jumping = false;
+
+	Player::sprite_sheet = sprite_sheet;
+}
+
 
 Player::~Player()
 {
@@ -35,11 +58,6 @@ Player::~Player()
 void Player::UpdateX()
 {
 	x += x_vel;
-//	float dif = x - (int) x;
-//	if ((div > 0 && dif < .5) || (dif < 0 && dif > -.5))
-//		x = (int) x;
-//	else
-//		x = (int) x + 1;
 
 }
 
@@ -54,7 +72,14 @@ void Player::UpdateY()
 
 void Player::Render()
 {
-	al_draw_filled_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(255 * ((int) GetAlive() ^ 1), 255 * GetAlive(), 0));
+	if(!sprite_sheet)
+	{
+		al_draw_filled_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(0, 255, 0));
+	}
+	else
+	{
+
+	}
 }
 
 void Player::Collide(int object_id)
@@ -100,12 +125,12 @@ void Player::Move(int direction)
 		y_dir = 1;
 		break;
 	case 2:         // left
-		//x_dir = -1;
+		x_dir = -1;
 		if (x_vel > -2)
 			x_vel -= 1;
 		break;
 	case 3:         // right
-		//x_dir = 1;
+		x_dir = 1;
 		if (x_vel < 2)
 			x_vel += 1;
 		break;
