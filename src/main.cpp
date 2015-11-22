@@ -2,7 +2,6 @@
 #include "Player.h"
 #include "Terrain.h"
 #include <iostream>
-#include <cmath>
 
 using namespace std;
 
