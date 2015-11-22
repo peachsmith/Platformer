@@ -4,12 +4,14 @@
 namespace peach
 {
 
-Player::Player()
+Player::Player() :
+		sprite_row(0)
 {
 	jumping = false;
 }
 
-Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound)
+Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound) :
+		sprite_row(0)
 {
 	SetID(peach::PLAYER);
 	SetAlive(alive);
@@ -29,7 +31,8 @@ Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float
 	sprite_sheet = 0;
 }
 
-Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound, void* sprite_sheet)
+Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound, void* sprite_sheet) :
+		sprite_row(0)
 {
 	SetID(peach::PLAYER);
 	SetAlive(alive);
@@ -48,7 +51,6 @@ Player::Player(bool alive, bool collidable, float x, float y, float x_vel, float
 
 	Player::sprite_sheet = sprite_sheet;
 }
-
 
 Player::~Player()
 {
@@ -72,13 +74,15 @@ void Player::UpdateY()
 
 void Player::Render()
 {
-	if(!sprite_sheet)
+	if (!sprite_sheet)
 	{
 		al_draw_filled_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(0, 255, 0));
 	}
 	else
 	{
-
+		//al_draw_bitmap_region((ALLEGRO_BITMAP*)sprite_sheet, 0, 20 * sprite_row, 20, 20, x, y, 0);
+		al_draw_scaled_bitmap((ALLEGRO_BITMAP*) sprite_sheet, 0, 20 * sprite_row, 20, 20, x - 12, y - 8, 40, 40, 0);
+		//al_draw_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(255, 0, 0), 1);
 	}
 }
 
@@ -126,11 +130,13 @@ void Player::Move(int direction)
 		break;
 	case 2:         // left
 		x_dir = -1;
+		sprite_row = 1;
 		if (x_vel > -2)
 			x_vel -= 1;
 		break;
 	case 3:         // right
 		x_dir = 1;
+		sprite_row = 0;
 		if (x_vel < 2)
 			x_vel += 1;
 		break;

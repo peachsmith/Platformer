@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Terrain.h"
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -23,6 +24,7 @@ int main(int argc, char** argv)
 	ALLEGRO_EVENT_QUEUE* event_queue = 0;
 	ALLEGRO_TIMER* timer = 0;
 	ALLEGRO_FONT* font = 0;
+	ALLEGRO_BITMAP* player_sprite = 0;
 
 	//=================================
 	// ALLEGRO INITIALIZATION
@@ -41,6 +43,9 @@ int main(int argc, char** argv)
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / FPS);
 	font = al_load_font("res/courbd.ttf", 18, 0);
+	player_sprite = al_load_bitmap("res/test.bmp");
+	al_convert_mask_to_alpha(player_sprite, al_map_rgb(255, 0, 255));
+	al_convert_mask_to_alpha(player_sprite, al_map_rgb(120, 0, 120));
 
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
@@ -61,7 +66,7 @@ int main(int argc, char** argv)
 	// ENTITIES
 	//=================================
 	// x, y, x_vel, y_vel, x_dir, y_dir, x_bound, y_bound
-	peach::Player player(true, true, 225, 240, 0, 0, 1, 1, 20, 20);
+	peach::Player player(true, true, 225, 240, 0, 0, 1, 1, 16, 32, (void*) player_sprite);
 	peach::Terrain brick_1(true, true, 145, 280, 0, 0, 0, 0, 200, 20); // lower middle
 	peach::Terrain brick_2(true, true, 365, 320, 0, 0, 0, 0, 70, 20); // left
 	peach::Terrain brick_3(true, true, 380, 210, 0, 0, 0, 0, 200, 20); // right
@@ -131,6 +136,12 @@ int main(int argc, char** argv)
 
 					if ((*itr)->CheckCollision((*itr2), x_depth, y_depth) >= 15)
 					{
+						// ignore false collision due to floating point nonsense
+						if (y_depth < 0 && y_depth > -.1)
+							continue;
+						else if (y_depth > 0 && y_depth < .1)
+							continue;
+
 						(*itr)->SetX((*itr)->GetX() - x_depth);
 
 						if (player.GetX() < 140)
@@ -431,6 +442,7 @@ int main(int argc, char** argv)
 	al_destroy_event_queue(event_queue);
 	al_destroy_timer(timer);
 	al_destroy_font(font);
+	al_destroy_bitmap(player_sprite);
 
 	return 0;
 }

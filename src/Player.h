@@ -8,6 +8,8 @@ namespace peach
 
 class Player: public Entity
 {
+private:
+	int sprite_row;
 public:
 	Player();
 	Player(bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound);
