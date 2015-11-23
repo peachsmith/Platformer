@@ -92,6 +92,12 @@ int main(int argc, char** argv)
 	float y_depth = 0;
 
 	//=================================
+	// PLAYER STUFF
+	//=================================
+	player.SetFrameDelay(6);
+	player.SetMaxFrame(4);
+
+	//=================================
 	// MAIN GAME LOOP
 	//=================================
 	while (!done)
@@ -123,8 +129,8 @@ int main(int argc, char** argv)
 			for (itr = entities.begin(); itr != entities.end(); ++itr)
 			{
 				// set jumping to true in case the entity is in the air
-				(*itr)->SetJumping(true);
 				(*itr)->UpdateX();
+				(*itr)->SetJumping(true);
 
 				for (itr2 = entities.begin(); itr2 != entities.end(); ++itr2)
 				{
@@ -427,7 +433,7 @@ int main(int argc, char** argv)
 //					"jump with space bar");
 
 			al_flip_display();
-			al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_clear_to_color(al_map_rgb(80, 160, 200));
 		}
 
 	}

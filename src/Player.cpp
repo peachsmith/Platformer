@@ -60,7 +60,20 @@ Player::~Player()
 void Player::UpdateX()
 {
 	x += x_vel;
+	if (x_vel && !jumping)
+	{
+		if (++frame_count >= frame_delay)
+		{
+			if (++current_frame >= max_frame)
+				current_frame = 1;
 
+			frame_count = 0;
+		}
+	}
+	else if(jumping)
+		current_frame = 1;
+	else
+		current_frame = 0;
 }
 
 void Player::UpdateY()
@@ -81,7 +94,7 @@ void Player::Render()
 	else
 	{
 		//al_draw_bitmap_region((ALLEGRO_BITMAP*)sprite_sheet, 0, 20 * sprite_row, 20, 20, x, y, 0);
-		al_draw_scaled_bitmap((ALLEGRO_BITMAP*) sprite_sheet, 0, 20 * sprite_row, 20, 20, x - 12, y - 8, 40, 40, 0);
+		al_draw_scaled_bitmap((ALLEGRO_BITMAP*) sprite_sheet, 20 * current_frame, 20 * sprite_row, 20, 20, x - 12, y - 8, 40, 40, 0);
 		//al_draw_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(255, 0, 0), 1);
 	}
 }

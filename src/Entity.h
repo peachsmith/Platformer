@@ -37,6 +37,11 @@ protected:
 	// sprite sheet
 	void* sprite_sheet;
 
+	int max_frame;
+	int current_frame;
+	int frame_count;
+	int frame_delay;
+
 public:
 	Entity();
 	Entity(int id, bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound);
@@ -168,6 +173,51 @@ public:
 	void SetSpriteSheet(void* sprite_sheet)
 	{
 		Entity::sprite_sheet = sprite_sheet;
+	}
+
+	int GetCurrentFrame() const
+	{
+		return current_frame;
+	}
+
+	void SetCurrentFrame(int currentFrame)
+	{
+		current_frame = currentFrame;
+	}
+
+	int GetMaxFrame() const
+	{
+		return max_frame;
+	}
+
+	void SetMaxFrame(int maxFrame)
+	{
+		max_frame = maxFrame;
+	}
+
+	int GetFrameCount()
+	{
+		return frame_count;
+	}
+
+	void SetFrameCount(int frame_count)
+	{
+		Entity::frame_count = frame_count;
+	}
+
+	void IncrementFrame()
+	{
+		frame_count++;
+	}
+
+	int GetFrameDelay()
+	{
+		return frame_delay;
+	}
+
+	void SetFrameDelay(int frame_delay)
+	{
+		Entity::frame_delay = frame_delay;
 	}
 
 };

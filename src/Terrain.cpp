@@ -33,7 +33,7 @@ Terrain::Terrain(bool alive, bool collidable, float x, float y, float x_vel, flo
 
 void Terrain::Render()
 {
-	al_draw_filled_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(0, 180, 220));
+	al_draw_filled_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(180, 170, 170));
 }
 
 void Terrain::Collide(int object_id)

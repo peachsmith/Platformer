@@ -5,7 +5,7 @@ namespace peach
 {
 
 Entity::Entity() :
-		jumping(false)
+		jumping(false), sprite_sheet(0), max_frame(0), current_frame(0), frame_count(0), frame_delay(0)
 {
 	id = 0;
 	alive = true;
@@ -19,11 +19,10 @@ Entity::Entity() :
 	y_dir = 0;
 	x_bound = 0;
 	y_bound = 0;
-	sprite_sheet = 0;
 }
 
 Entity::Entity(int id, bool alive, bool collidable, float x, float y, float x_vel, float y_vel, float x_dir, float y_dir, float x_bound, float y_bound) :
-		jumping(false), sprite_sheet(0)
+		jumping(false), sprite_sheet(0), max_frame(0), current_frame(0), frame_count(0), frame_delay(0)
 {
 	Entity::id = id;
 	Entity::alive = alive;
