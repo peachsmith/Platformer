@@ -3,6 +3,7 @@
 #include "Terrain.h"
 #include "Scenery.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -305,6 +306,24 @@ int main(int argc, char** argv)
 	//=================================
 	player.SetFrameDelay(6);
 	player.SetMaxFrame(4);
+
+	//=================================
+	// CONFIGURATION
+	//=================================
+	ifstream config("res/background.txt");
+	int background[3] =
+	{ 0, 0, 0 };
+	if (config.is_open())
+	{
+		string color_name;
+		int color_value;
+		int bg_i = 0; // background index
+		while (config >> color_name && config >> color_value)
+		{
+			if (bg_i < 3)
+				background[bg_i++] = color_value;
+		}
+	}
 
 	//=================================
 	// MAIN GAME LOOP
@@ -677,7 +696,7 @@ int main(int argc, char** argv)
 //					"jump with space bar");
 
 			al_flip_display();
-			al_clear_to_color(al_map_rgb(80, 160, 200));
+			al_clear_to_color(al_map_rgb(background[0], background[1], background[2])); // 0 134 179
 		}
 
 	}
