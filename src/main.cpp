@@ -178,6 +178,12 @@ int main(int argc, char** argv)
 	peach::Scenery brick_78(660, 390, 20, 20, 0, 0, (void*) scenery_sheet);
 	peach::Scenery brick_79(680, 390, 20, 20, 0, 0, (void*) scenery_sheet);
 
+	// flowers
+	peach::Scenery flower_1(100, 370, 20, 20, 20, 0, (void*) scenery_sheet);
+	peach::Scenery flower_2(200, 370, 20, 20, 20, 0, (void*) scenery_sheet);
+	peach::Scenery flower_3(300, 370, 20, 20, 20, 0, (void*) scenery_sheet);
+	peach::Scenery flower_4(400, 370, 20, 20, 20, 0, (void*) scenery_sheet);
+
 	// add the entities to the list
 	collidables.push_back(&terrain_1);
 	collidables.push_back(&terrain_2);
@@ -282,6 +288,12 @@ int main(int argc, char** argv)
 	drawables.push_back(&brick_77);
 	drawables.push_back(&brick_78);
 	drawables.push_back(&brick_79);
+
+	// flowers
+	drawables.push_back(&flower_1);
+	drawables.push_back(&flower_2);
+	drawables.push_back(&flower_3);
+	drawables.push_back(&flower_4);
 
 	drawables.push_back(&player);
 
