@@ -662,13 +662,13 @@ int main(int argc, char** argv)
 			}
 
 			// player position and velocity
-			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "x: %.2f", player.GetX());
-			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 25, 0, "y: %.2f", player.GetY());
-			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 45, 0, "x_vel: %.2f", player.GetXVel());
-			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 65, 0, "y_vel: %.2f", player.GetYVel());
+//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "x: %.2f", player.GetX());
+//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 25, 0, "y: %.2f", player.GetY());
+//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 45, 0, "x_vel: %.2f", player.GetXVel());
+//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 65, 0, "y_vel: %.2f", player.GetYVel());
 
-			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 5, 0, "brick_1 y:   %.6f", brick_1.GetY());
-			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 25, 0, "terrain_1 y: %.6f", terrain_1.GetY());
+//			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 5, 0, "brick_1 y:   %.6f", brick_1.GetY());
+//			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 25, 0, "terrain_1 y: %.6f", terrain_1.GetY());
 
 			// controls
 //			al_draw_textf(font, al_map_rgb(250, 250, 250), 100, 5, 0,
