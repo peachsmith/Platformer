@@ -2,7 +2,7 @@
 #define PEACH_BASE_H_
 
 #include <iostream>
-#include <list>
+#include <vector>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
@@ -14,7 +14,7 @@ namespace peach
 
 enum ID
 {
-	PLAYER, ENEMY, PROJECTILE, TERRAIN
+	PLAYER, ENEMY, PROJECTILE, TERRAIN, SCENERY
 };
 enum keys
 {

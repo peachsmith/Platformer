@@ -43,16 +43,6 @@ Entity::~Entity()
 
 }
 
-void Entity::UpdateX()
-{
-	x += x_vel;
-}
-
-void Entity::UpdateY()
-{
-	y += y_vel;
-}
-
 void Entity::Render()
 {
 
@@ -61,6 +51,16 @@ void Entity::Render()
 void Entity::Collide(int object_id)
 {
 
+}
+
+void Entity::UpdateX()
+{
+	x += x_vel;
+}
+
+void Entity::UpdateY()
+{
+	y += y_vel;
 }
 
 void Entity::SlowDown()
@@ -90,7 +90,7 @@ void Entity::Jump()
  *    |    |
  *    +----+
  */
-int Entity::CheckCollision(peach::Entity* other, float& x_depth, float& y_depth)
+int Entity::CheckCollision(peach::HitBox* other, float& x_depth, float& y_depth)
 {
 	int collision = 0;
 	float other_x = other->GetX();

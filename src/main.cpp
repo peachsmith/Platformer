@@ -1,6 +1,7 @@
 #include "Entity.h"
 #include "Player.h"
 #include "Terrain.h"
+#include "Scenery.h"
 #include <iostream>
 
 using namespace std;
@@ -23,7 +24,8 @@ int main(int argc, char** argv)
 	ALLEGRO_EVENT_QUEUE* event_queue = 0;
 	ALLEGRO_TIMER* timer = 0;
 	ALLEGRO_FONT* font = 0;
-	ALLEGRO_BITMAP* player_sprite = 0;
+	ALLEGRO_BITMAP* player_sheet = 0;
+	ALLEGRO_BITMAP* scenery_sheet = 0;
 
 	//=================================
 	// ALLEGRO INITIALIZATION
@@ -42,9 +44,12 @@ int main(int argc, char** argv)
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / FPS);
 	font = al_load_font("res/courbd.ttf", 18, 0);
-	player_sprite = al_load_bitmap("res/test.bmp");
-	al_convert_mask_to_alpha(player_sprite, al_map_rgb(255, 0, 255));
-	al_convert_mask_to_alpha(player_sprite, al_map_rgb(120, 0, 120));
+	player_sheet = al_load_bitmap("res/test.bmp");
+	scenery_sheet = al_load_bitmap("res/scenery.bmp");
+	al_convert_mask_to_alpha(player_sheet, al_map_rgb(255, 0, 255));
+	al_convert_mask_to_alpha(player_sheet, al_map_rgb(120, 0, 120));
+	al_convert_mask_to_alpha(scenery_sheet, al_map_rgb(255, 0, 255));
+	al_convert_mask_to_alpha(scenery_sheet, al_map_rgb(120, 0, 120));
 
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
@@ -55,38 +60,230 @@ int main(int argc, char** argv)
 	srand(time(NULL));
 
 	//=================================
-	// ENTITIES
+	// COLLIDABLES
 	//=================================
-	std::list<peach::Entity*> entities;
-	std::list<peach::Entity*>::iterator itr;
-	std::list<peach::Entity*>::iterator itr2;
+	std::vector<peach::Entity*> collidables;
+
+	//=================================
+	// DRAWABLES
+	//=================================
+	std::vector<peach::Entity*> drawables;
 
 	//=================================
 	// ENTITIES
 	//=================================
 	// x, y, x_vel, y_vel, x_dir, y_dir, x_bound, y_bound
-	peach::Player player(true, true, 225, 240, 0, 0, 1, 1, 16, 32, (void*) player_sprite);
-	peach::Terrain brick_1(true, true, 145, 280, 0, 0, 0, 0, 200, 20); // lower middle
-	peach::Terrain brick_2(true, true, 365, 320, 0, 0, 0, 0, 70, 20); // left
-	peach::Terrain brick_3(true, true, 380, 210, 0, 0, 0, 0, 200, 20); // right
-	peach::Terrain brick_4(true, true, 145, 130, 0, 0, 0, 0, 200, 20); // upper middle
-	peach::Terrain brick_5(true, true, 430, 150, 0, 0, 0, 0, 100, 20); // very upper right
-	peach::Terrain brick_6(true, true, 450, 80, 0, 0, 0, 0, 100, 20); // very upper upper right
-	peach::Terrain floor(true, true, 10, 390, 0, 0, 0, 0, 680, 10);
+	peach::Player player(true, true, 225, 240, 0, 0, 1, 1, 16, 32, (void*) player_sheet);
+	peach::Terrain terrain_1(true, true, 145, 280, 0, 0, 0, 0, 200, 20); // lower middle
+	peach::Terrain terrain_2(true, true, 365, 320, 0, 0, 0, 0, 80, 20); // left
+	peach::Terrain terrain_3(true, true, 380, 210, 0, 0, 0, 0, 200, 20); // right
+	peach::Terrain terrain_4(true, true, 145, 130, 0, 0, 0, 0, 200, 20); // upper middle
+	peach::Terrain terrain_5(true, true, 430, 150, 0, 0, 0, 0, 100, 20); // upper right
+	peach::Terrain terrain_6(true, true, 450, 80, 0, 0, 0, 0, 100, 20); // upper upper right
+	peach::Terrain floor(true, true, 10, 390, 0, 0, 0, 0, 680, 20);
 	peach::Terrain left_wall(true, true, 0, 0, 0, 0, 0, 0, 10, 400);
 	peach::Terrain right_wall(true, true, 690, 0, 0, 0, 0, 0, 10, 400);
 
+	// x, y, x_bound, y_bound, sheet_x, sheet_y, sprite_sheet
+	// lower middle
+	peach::Scenery brick_1(145, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_2(165, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_3(185, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_4(205, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_5(225, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_6(245, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_7(265, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_8(285, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_9(305, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_10(325, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+
+	// left
+	peach::Scenery brick_11(365, 320, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_12(385, 320, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_13(405, 320, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_14(425, 320, 20, 20, 40, 0, (void*) scenery_sheet);
+
+	// right
+	peach::Scenery brick_15(380, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_16(400, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_17(420, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_18(440, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_19(460, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_20(480, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_21(500, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_22(520, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_23(540, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_24(560, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+
+	// upper middle
+	peach::Scenery brick_25(145, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_26(165, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_27(185, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_28(205, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_29(225, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_30(245, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_31(265, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_32(285, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_33(305, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_34(325, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+
+	// upper right
+	peach::Scenery brick_35(430, 150, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_36(450, 150, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_37(470, 150, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_38(490, 150, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_39(510, 150, 20, 20, 40, 0, (void*) scenery_sheet);
+
+	// upper upper right
+	peach::Scenery brick_40(450, 80, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_41(470, 80, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_42(490, 80, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_43(510, 80, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_44(530, 80, 20, 20, 40, 0, (void*) scenery_sheet);
+
+	// floor
+	peach::Scenery brick_45(0, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_46(20, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_47(40, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_48(60, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_49(80, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_50(100, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_51(120, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_52(140, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_53(160, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_54(180, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_55(200, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_56(220, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_57(240, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_58(260, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_59(280, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_60(300, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_61(320, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_62(340, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_63(360, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_64(380, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_65(400, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_66(420, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_67(440, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_68(460, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_69(480, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_70(500, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_71(520, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_72(540, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_73(560, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_74(580, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_75(600, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_76(620, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_77(640, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_78(660, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+	peach::Scenery brick_79(680, 390, 20, 20, 0, 0, (void*) scenery_sheet);
+
 	// add the entities to the list
-	entities.push_back(&brick_1);
-	entities.push_back(&brick_2);
-	entities.push_back(&brick_3);
-	entities.push_back(&brick_4);
-	entities.push_back(&brick_5);
-	entities.push_back(&brick_6);
-	entities.push_back(&floor);
-	entities.push_back(&left_wall);
-	entities.push_back(&right_wall);
-	entities.push_back(&player); // for rendering, player should be last
+	collidables.push_back(&terrain_1);
+	collidables.push_back(&terrain_2);
+	collidables.push_back(&terrain_3);
+	collidables.push_back(&terrain_4);
+	collidables.push_back(&terrain_5);
+	collidables.push_back(&terrain_6);
+	collidables.push_back(&floor);
+	collidables.push_back(&left_wall);
+	collidables.push_back(&right_wall);
+	collidables.push_back(&player);
+
+	// lower middle
+	drawables.push_back(&brick_1);
+	drawables.push_back(&brick_2);
+	drawables.push_back(&brick_3);
+	drawables.push_back(&brick_4);
+	drawables.push_back(&brick_5);
+	drawables.push_back(&brick_6);
+	drawables.push_back(&brick_7);
+	drawables.push_back(&brick_8);
+	drawables.push_back(&brick_9);
+	drawables.push_back(&brick_10);
+
+	// left
+	drawables.push_back(&brick_11);
+	drawables.push_back(&brick_12);
+	drawables.push_back(&brick_13);
+	drawables.push_back(&brick_14);
+
+	// right
+	drawables.push_back(&brick_15);
+	drawables.push_back(&brick_16);
+	drawables.push_back(&brick_17);
+	drawables.push_back(&brick_18);
+	drawables.push_back(&brick_19);
+	drawables.push_back(&brick_20);
+	drawables.push_back(&brick_21);
+	drawables.push_back(&brick_22);
+	drawables.push_back(&brick_23);
+	drawables.push_back(&brick_24);
+
+	// lower middle
+	drawables.push_back(&brick_25);
+	drawables.push_back(&brick_26);
+	drawables.push_back(&brick_27);
+	drawables.push_back(&brick_28);
+	drawables.push_back(&brick_29);
+	drawables.push_back(&brick_30);
+	drawables.push_back(&brick_31);
+	drawables.push_back(&brick_32);
+	drawables.push_back(&brick_33);
+	drawables.push_back(&brick_34);
+
+	// upper right
+	drawables.push_back(&brick_35);
+	drawables.push_back(&brick_36);
+	drawables.push_back(&brick_37);
+	drawables.push_back(&brick_38);
+	drawables.push_back(&brick_39);
+
+	// upper upper right
+	drawables.push_back(&brick_40);
+	drawables.push_back(&brick_41);
+	drawables.push_back(&brick_42);
+	drawables.push_back(&brick_43);
+	drawables.push_back(&brick_44);
+
+	// floor
+	drawables.push_back(&brick_45);
+	drawables.push_back(&brick_46);
+	drawables.push_back(&brick_47);
+	drawables.push_back(&brick_48);
+	drawables.push_back(&brick_49);
+	drawables.push_back(&brick_50);
+	drawables.push_back(&brick_51);
+	drawables.push_back(&brick_52);
+	drawables.push_back(&brick_53);
+	drawables.push_back(&brick_54);
+	drawables.push_back(&brick_55);
+	drawables.push_back(&brick_56);
+	drawables.push_back(&brick_57);
+	drawables.push_back(&brick_58);
+	drawables.push_back(&brick_59);
+	drawables.push_back(&brick_60);
+	drawables.push_back(&brick_61);
+	drawables.push_back(&brick_62);
+	drawables.push_back(&brick_63);
+	drawables.push_back(&brick_64);
+	drawables.push_back(&brick_65);
+	drawables.push_back(&brick_66);
+	drawables.push_back(&brick_67);
+	drawables.push_back(&brick_68);
+	drawables.push_back(&brick_69);
+	drawables.push_back(&brick_70);
+	drawables.push_back(&brick_71);
+	drawables.push_back(&brick_72);
+	drawables.push_back(&brick_73);
+	drawables.push_back(&brick_74);
+	drawables.push_back(&brick_75);
+	drawables.push_back(&brick_76);
+	drawables.push_back(&brick_77);
+	drawables.push_back(&brick_78);
+	drawables.push_back(&brick_79);
+
+	drawables.push_back(&player);
 
 	float x_depth = 0;
 	float y_depth = 0;
@@ -126,20 +323,20 @@ int main(int argc, char** argv)
 				player.Jump();
 
 			// update
-			for (itr = entities.begin(); itr != entities.end(); ++itr)
+			for (unsigned int i = 0; i < collidables.size(); i++)
 			{
 				// set jumping to true in case the entity is in the air
-				(*itr)->UpdateX();
-				(*itr)->SetJumping(true);
+				collidables[i]->UpdateX();
+				collidables[i]->SetJumping(true);
 
-				for (itr2 = entities.begin(); itr2 != entities.end(); ++itr2)
+				for (unsigned int j = 0; j < collidables.size(); j++)
 				{
-					if ((*itr)->GetID() == (*itr2)->GetID())
+					if (collidables[i]->GetID() == collidables[j]->GetID())
 					{
 						continue; // for now, two Entities with the same ID cannot collide
 					}
 
-					if ((*itr)->CheckCollision((*itr2), x_depth, y_depth) >= 15)
+					if (collidables[i]->CheckCollision(collidables[j], x_depth, y_depth) >= 15)
 					{
 						// ignore false collision due to floating point nonsense
 						if (y_depth < 0 && y_depth > -.1)
@@ -147,67 +344,67 @@ int main(int argc, char** argv)
 						else if (y_depth > 0 && y_depth < .1)
 							continue;
 
-						(*itr)->SetX((*itr)->GetX() - x_depth);
+						collidables[i]->SetX(collidables[i]->GetX() - x_depth);
 
 						if (player.GetX() < 140)
 						{
 							float x_overshoot = 140 - player.GetX();
-							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
-							{
-								(*scr_itr)->SetX((*scr_itr)->GetX() + x_overshoot);
-							}
+							for (unsigned int k = 0; k < collidables.size(); k++)
+								collidables[k]->SetX(collidables[k]->GetX() + x_overshoot);
+							for (unsigned int k = 0; k < drawables.size() - 1; k++)
+								drawables[k]->SetX(drawables[k]->GetX() + x_overshoot);
 						}
 						else if (player.GetX() >= 320)
 						{
 							float x_overshoot = player.GetX() - 320;
-							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
-							{
-								(*scr_itr)->SetX((*scr_itr)->GetX() - x_overshoot);
-							}
+							for (unsigned int k = 0; k < collidables.size(); k++)
+								collidables[k]->SetX(collidables[k]->GetX() - x_overshoot);
+							for (unsigned int k = 0; k < drawables.size() - 1; k++)
+								drawables[k]->SetX(drawables[k]->GetX() - x_overshoot);
 						}
 
-						(*itr)->Collide((*itr2)->GetID());
+						collidables[i]->Collide(collidables[j]->GetID());
 						if (x_depth)
-							(*itr)->SetXVel(0);
+							collidables[i]->SetXVel(0);
 					}
 				}
-				(*itr)->UpdateY();
-				for (itr2 = entities.begin(); itr2 != entities.end(); ++itr2)
+				collidables[i]->UpdateY();
+				for (unsigned int j = 0; j < collidables.size(); j++)
 				{
-					if ((*itr)->GetID() == (*itr2)->GetID())
+					if (collidables[i]->GetID() == collidables[j]->GetID())
 					{
 						continue; // for now, two Entities with the same ID cannot collide
 					}
 
-					if ((*itr)->CheckCollision((*itr2), x_depth, y_depth) >= 15)
+					if (collidables[i]->CheckCollision(collidables[j], x_depth, y_depth) >= 15)
 					{
 						// resolve vertical collision
-						(*itr)->SetY((*itr)->GetY() - y_depth);
+						collidables[i]->SetY(collidables[i]->GetY() - y_depth);
 
 						if (player.GetY() < 190)
 						{
 							float y_overshoot = 190 - player.GetY();
-							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
-							{
-								(*scr_itr)->SetY((*scr_itr)->GetY() + y_overshoot);
-							}
+							for (unsigned int i = 0; i < collidables.size(); i++)
+								collidables[i]->SetY(collidables[i]->GetY() + y_overshoot);
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() + y_overshoot);
 						}
 						else if (player.GetY() >= 260)
 						{
 							float y_overshoot = player.GetY() - 260;
-							for (std::list<peach::Entity*>::iterator scr_itr = entities.begin(); scr_itr != entities.end(); ++scr_itr)
-							{
-								(*scr_itr)->SetY((*scr_itr)->GetY() - y_overshoot);
-							}
+							for (unsigned int i = 0; i < collidables.size(); i++)
+								collidables[i]->SetY(collidables[i]->GetY() - y_overshoot);
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() - y_overshoot);
 						}
 
-						(*itr)->Collide((*itr2)->GetID());
+						collidables[i]->Collide(collidables[j]->GetID());
 						if (y_depth)
-							(*itr)->SetYVel(0);
+							collidables[i]->SetYVel(0);
 						// if the bottom of the entity collides with something, set jumping to false
 						if (y_depth > 0)
 						{
-							(*itr)->SetJumping(false);
+							collidables[i]->SetJumping(false);
 						}
 					}
 				}
@@ -227,12 +424,13 @@ int main(int argc, char** argv)
 			if ((player.GetX() == 320 || player.GetX() == 140) && player.GetXVel())
 			{
 				bool scroll_collision = false;
-				for (itr = entities.begin(); itr != entities.end(); ++itr)
+				unsigned int i;
+				for (i = 0; i < collidables.size(); i++)
 				{
-					if ((*itr)->GetID() != peach::PLAYER)
+					if (collidables[i]->GetID() != peach::PLAYER)
 					{
-						(*itr)->SetX((*itr)->GetX() - player.GetXVel());
-						if ((*itr)->CheckCollision((&player), x_depth, y_depth) >= 15)
+						collidables[i]->SetX(collidables[i]->GetX() - player.GetXVel());
+						if (collidables[i]->CheckCollision((&player), x_depth, y_depth) >= 15)
 						{
 							scroll_collision = true;
 							break;
@@ -242,27 +440,34 @@ int main(int argc, char** argv)
 				// resolve collisions due to scrolling
 				if (scroll_collision)
 				{
-					for (; itr != entities.begin(); --itr)
+					for (; i > 0; i--)
 					{
-						if ((*itr)->GetID() != peach::PLAYER)
+						if (collidables[i]->GetID() != peach::PLAYER)
 						{
-							(*itr)->SetX((*itr)->GetX() + player.GetXVel());
+							collidables[i]->SetX(collidables[i]->GetX() + player.GetXVel());
 						}
 					}
-					(*itr)->SetX((*itr)->GetX() + player.GetXVel());
+					collidables[i]->SetX(collidables[i]->GetX() + player.GetXVel());
 					player.SetXVel(0);
+				}
+				else
+				{
+					// scenery horizontal scrolling
+					for (unsigned int i = 0; i < drawables.size() - 1; i++)
+						drawables[i]->SetX(drawables[i]->GetX() - player.GetXVel());
 				}
 			}
 			// vertical scrolling
 			if ((player.GetY() == 260 || player.GetY() == 190) && player.GetYVel())
 			{
 				bool scroll_collision = false;
-				for (itr = entities.begin(); itr != entities.end(); ++itr)
+				unsigned int i;
+				for (i = 0; i < collidables.size(); i++)
 				{
-					if ((*itr)->GetID() != peach::PLAYER)
+					if (collidables[i]->GetID() != peach::PLAYER)
 					{
-						(*itr)->SetY((*itr)->GetY() - player.GetYVel());
-						if ((*itr)->CheckCollision((&player), x_depth, y_depth) >= 15)
+						collidables[i]->SetY(collidables[i]->GetY() - player.GetYVel());
+						if (collidables[i]->CheckCollision((&player), x_depth, y_depth) >= 15)
 						{
 							scroll_collision = true;
 							break;
@@ -272,15 +477,21 @@ int main(int argc, char** argv)
 				// resolve collisions due to scrolling
 				if (scroll_collision)
 				{
-					for (; itr != entities.begin(); --itr)
+					for (; i > 0; i--)
 					{
-						if ((*itr)->GetID() != peach::PLAYER)
+						if (collidables[i]->GetID() != peach::PLAYER)
 						{
-							(*itr)->SetY((*itr)->GetY() + player.GetYVel());
+							collidables[i]->SetY(collidables[i]->GetY() + player.GetYVel());
 						}
 					}
-					(*itr)->SetY((*itr)->GetY() + player.GetYVel());
+					collidables[i]->SetY(collidables[i]->GetY() + player.GetYVel());
 					player.SetYVel(0);
+				}
+				else
+				{
+					// scenery vertical scrolling
+					for (unsigned int i = 0; i < drawables.size() - 1; i++)
+						drawables[i]->SetY(drawables[i]->GetY() - player.GetYVel());
 				}
 			}
 			// move everything so the player is closer to the middle
@@ -291,40 +502,53 @@ int main(int argc, char** argv)
 				{
 					if (player_y - 1 < 230)
 					{
-						for (itr = entities.begin(); itr != entities.end(); ++itr)
-							(*itr)->SetY((*itr)->GetY() - player.GetY() - 230);
+						for (unsigned int i = 0; i < collidables.size() - 1; i++)
+							collidables[i]->SetY(collidables[i]->GetY() - (player.GetY() - 230));
+						for (unsigned int i = 0; i < drawables.size() - 1; i++)
+							drawables[i]->SetY(drawables[i]->GetY() - (player.GetY() - 230));
+						player.SetY(player.GetY() - (player.GetY() - 230));
 					}
 					else
 					{
-						for (itr = entities.begin(); itr != entities.end(); ++itr)
-							(*itr)->SetY((*itr)->GetY() - 1);
+						for (unsigned int i = 0; i < collidables.size(); i++)
+							collidables[i]->SetY(collidables[i]->GetY() - 1);
+						for (unsigned int i = 0; i < drawables.size() - 1; i++)
+							drawables[i]->SetY(drawables[i]->GetY() - 1);
 					}
 					if (player.GetY() < 230)
 					{
 						player_y = player.GetY();
-						for (itr = entities.begin(); itr != entities.end(); ++itr)
-						{
-							(*itr)->SetY((*itr)->GetY() + 230 - player_y);
-						}
+						for (unsigned int i = 0; i < collidables.size(); i++)
+							collidables[i]->SetY(collidables[i]->GetY() + (230 - player_y));
+						for (unsigned int i = 0; i < drawables.size() - 1; i++)
+							drawables[i]->SetY(drawables[i]->GetY() + (230 - player_y));
 					}
 				}
 				else if (player_y < 230)
 				{
 					if (player_y + 1 > 230)
 					{
-						for (itr = entities.begin(); itr != entities.end(); ++itr)
-							(*itr)->SetY((*itr)->GetY() + 230 - player.GetY());
+						for (unsigned int i = 0; i < collidables.size() - 1; i++)
+							collidables[i]->SetY(collidables[i]->GetY() + (230 - player.GetY()));
+						for (unsigned int i = 0; i < drawables.size() - 1; i++)
+							drawables[i]->SetY(drawables[i]->GetY() + (230 - player.GetY()));
+						player.SetY(player.GetY() - (player.GetY() - 230));
 					}
 					else
 					{
-						for (itr = entities.begin(); itr != entities.end(); ++itr)
-							(*itr)->SetY((*itr)->GetY() + 1);
+						for (unsigned int i = 0; i < collidables.size(); i++)
+							collidables[i]->SetY(collidables[i]->GetY() + 1);
+						for (unsigned int i = 0; i < drawables.size() - 1; i++)
+							drawables[i]->SetY(drawables[i]->GetY() + 1);
 					}
 					if (player.GetY() > 230)
 					{
 						player_y = player.GetY();
-						for (itr = entities.begin(); itr != entities.end(); ++itr)
-							(*itr)->SetY((*itr)->GetY() + 230 - player_y);
+						for (unsigned int i = 0; i < collidables.size() - 1; i++)
+							collidables[i]->SetY(collidables[i]->GetY() + (230 - player_y));
+						for (unsigned int i = 0; i < drawables.size() - 1; i++)
+							drawables[i]->SetY(drawables[i]->GetY() + (230 - player_y));
+						player.SetY(player.GetY() - (230 - player_y));
 					}
 				}
 			}
@@ -415,9 +639,14 @@ int main(int argc, char** argv)
 		{
 			redraw = false;
 
-			for (itr = entities.begin(); itr != entities.end(); ++itr)
+			for (unsigned int i = 0; i < collidables.size(); i++)
 			{
-				(*itr)->Render();
+				collidables[i]->Render();
+			}
+
+			for (unsigned int i = 0; i < drawables.size(); i++)
+			{
+				drawables[i]->Render();
 			}
 
 			// player position and velocity
@@ -425,6 +654,9 @@ int main(int argc, char** argv)
 			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 25, 0, "y: %.2f", player.GetY());
 			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 45, 0, "x_vel: %.2f", player.GetXVel());
 			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 65, 0, "y_vel: %.2f", player.GetYVel());
+
+			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 5, 0, "brick_1 y:   %.6f", brick_1.GetY());
+			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 25, 0, "terrain_1 y: %.6f", terrain_1.GetY());
 
 			// controls
 //			al_draw_textf(font, al_map_rgb(250, 250, 250), 100, 5, 0,
@@ -447,7 +679,8 @@ int main(int argc, char** argv)
 	al_destroy_event_queue(event_queue);
 	al_destroy_timer(timer);
 	al_destroy_font(font);
-	al_destroy_bitmap(player_sprite);
+	al_destroy_bitmap(player_sheet);
+	al_destroy_bitmap(scenery_sheet);
 
 	return 0;
 }
