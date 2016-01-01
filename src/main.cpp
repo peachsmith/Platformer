@@ -709,11 +709,11 @@ int main(int argc, char** argv)
 				drawables[i]->Render();
 			}
 
-			al_draw_rectangle(x_min, y_min, x_min - 10, y_max, al_map_rgb(255, 0, 0), 0);
-			al_draw_rectangle(x_max + 16, y_min, x_max + 26, y_max, al_map_rgb(255, 0, 0), 0);
-
-			al_draw_rectangle(x_min, y_min, x_max + 16, y_min + 10, al_map_rgb(0, 0, 255), 0);
-			al_draw_rectangle(x_min, y_max, x_max + 16, y_max - 10, al_map_rgb(0, 0, 255), 0);
+//			al_draw_rectangle(x_min, y_min, x_min - 10, y_max, al_map_rgb(255, 0, 0), 0);
+//			al_draw_rectangle(x_max + 16, y_min, x_max + 26, y_max, al_map_rgb(255, 0, 0), 0);
+//
+//			al_draw_rectangle(x_min, y_min, x_max + 16, y_min + 10, al_map_rgb(0, 0, 255), 0);
+//			al_draw_rectangle(x_min, y_max, x_max + 16, y_max - 10, al_map_rgb(0, 0, 255), 0);
 
 			// player position and velocity
 //			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "x: %.2f", player.GetX());
