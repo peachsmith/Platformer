@@ -93,8 +93,8 @@ void Player::Render()
 	}
 	else
 	{
-		//al_draw_bitmap_region((ALLEGRO_BITMAP*)sprite_sheet, 0, 20 * sprite_row, 20, 20, x, y, 0);
-		al_draw_scaled_bitmap((ALLEGRO_BITMAP*) sprite_sheet, 20 * current_frame, 20 * sprite_row, 20, 20, x - 12, y - 8, 40, 40, 0);
+		al_draw_bitmap_region((ALLEGRO_BITMAP*)sprite_sheet, 40 * current_frame, 40 * sprite_row, 40, 40, x - 12, y - 8, 0);
+		//al_draw_scaled_bitmap((ALLEGRO_BITMAP*) sprite_sheet, 20 * current_frame, 20 * sprite_row, 20, 20, x - 12, y - 8, 40, 40, 0);
 		//al_draw_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(255, 0, 0), 1);
 	}
 }

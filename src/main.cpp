@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / FPS);
 	font = al_load_font("res/courbd.ttf", 18, 0);
-	player_sheet = al_load_bitmap("res/test.bmp");
+	player_sheet = al_load_bitmap("res/player.bmp");
 	scenery_sheet = al_load_bitmap("res/scenery.bmp");
 	al_convert_mask_to_alpha(player_sheet, al_map_rgb(255, 0, 255));
 	al_convert_mask_to_alpha(player_sheet, al_map_rgb(120, 0, 120));
