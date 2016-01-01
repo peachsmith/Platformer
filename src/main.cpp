@@ -10,17 +10,25 @@ using namespace std;
 int main(int argc, char** argv)
 {
 	//=================================
-	// BASIC LOGIC
+	// BASIC GAME PROPERTIES
 	//=================================
 	const int FPS = 60;
 	bool done = false;
 	bool redraw = true;
 	bool keys[8] =
 	{ false, false, false, false, false, false, false, false };
+	int screen_width;
+	int screen_height;
+	int x_min;
+	int x_max;
+	int y_min;
+	int y_max;
+	int y_scroll_correction;
 
 	//=================================
 	// ALLEGRO VARIABLES
 	//=================================
+	ALLEGRO_MONITOR_INFO monitor_info;
 	ALLEGRO_DISPLAY* display = 0;
 	ALLEGRO_EVENT_QUEUE* event_queue = 0;
 	ALLEGRO_TIMER* timer = 0;
@@ -40,8 +48,28 @@ int main(int argc, char** argv)
 	al_init_font_addon();
 	al_init_ttf_addon();
 
+	al_get_monitor_info(0, &monitor_info);
+
+	if (monitor_info.x2 - monitor_info.x1 > 800)
+		screen_width = 700;
+	else
+		screen_width = monitor_info.x2 - monitor_info.x1 - 1;
+
+	if (monitor_info.y2 - monitor_info.y1 > 800)
+		screen_height = 600;
+	else
+		screen_height = monitor_info.y2 - monitor_info.y1 - 1;
+
+	x_min = screen_width / 5 * 2 - 10;
+	x_max = screen_width / 5 * 3 - 10;
+
+	y_min = screen_height / 5 * 3 - 30;
+	y_max = screen_height / 5 * 3;
+
+	y_scroll_correction = y_max / 8 * 7;
+
 	//al_set_new_display_flags(ALLEGRO_FRAMELESS);
-	display = al_create_display(500, 400);
+	display = al_create_display(screen_width, screen_height);
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / FPS);
 	font = al_load_font("res/courbd.ttf", 18, 0);
@@ -74,7 +102,7 @@ int main(int argc, char** argv)
 	// ENTITIES
 	//=================================
 	// x, y, x_vel, y_vel, x_dir, y_dir, x_bound, y_bound
-	peach::Player player(true, true, 225, 240, 0, 0, 1, 1, 16, 32, (void*) player_sheet);
+	peach::Player player(true, true, 300, 240, 0, 0, 1, 1, 16, 32, (void*) player_sheet);
 	peach::Terrain terrain_1(true, true, 145, 280, 0, 0, 0, 0, 200, 20); // lower middle
 	peach::Terrain terrain_2(true, true, 365, 320, 0, 0, 0, 0, 80, 20); // left
 	peach::Terrain terrain_3(true, true, 380, 210, 0, 0, 0, 0, 200, 20); // right
@@ -377,17 +405,17 @@ int main(int argc, char** argv)
 
 						collidables[i]->SetX(collidables[i]->GetX() - x_depth);
 
-						if (player.GetX() < 140)
+						if (player.GetX() < x_min)
 						{
-							float x_overshoot = 140 - player.GetX();
+							float x_overshoot = x_min - player.GetX();
 							for (unsigned int k = 0; k < collidables.size(); k++)
 								collidables[k]->SetX(collidables[k]->GetX() + x_overshoot);
 							for (unsigned int k = 0; k < drawables.size() - 1; k++)
 								drawables[k]->SetX(drawables[k]->GetX() + x_overshoot);
 						}
-						else if (player.GetX() >= 320)
+						else if (player.GetX() >= x_max)
 						{
-							float x_overshoot = player.GetX() - 320;
+							float x_overshoot = player.GetX() - x_max;
 							for (unsigned int k = 0; k < collidables.size(); k++)
 								collidables[k]->SetX(collidables[k]->GetX() - x_overshoot);
 							for (unsigned int k = 0; k < drawables.size() - 1; k++)
@@ -412,17 +440,17 @@ int main(int argc, char** argv)
 						// resolve vertical collision
 						collidables[i]->SetY(collidables[i]->GetY() - y_depth);
 
-						if (player.GetY() < 190)
+						if (player.GetY() < y_min)
 						{
-							float y_overshoot = 190 - player.GetY();
+							float y_overshoot = y_min - player.GetY();
 							for (unsigned int i = 0; i < collidables.size(); i++)
 								collidables[i]->SetY(collidables[i]->GetY() + y_overshoot);
 							for (unsigned int i = 0; i < drawables.size() - 1; i++)
 								drawables[i]->SetY(drawables[i]->GetY() + y_overshoot);
 						}
-						else if (player.GetY() >= 260)
+						else if (player.GetY() >= y_max)
 						{
-							float y_overshoot = player.GetY() - 260;
+							float y_overshoot = player.GetY() - y_max;
 							for (unsigned int i = 0; i < collidables.size(); i++)
 								collidables[i]->SetY(collidables[i]->GetY() - y_overshoot);
 							for (unsigned int i = 0; i < drawables.size() - 1; i++)
@@ -441,18 +469,18 @@ int main(int argc, char** argv)
 				}
 			}
 
-			if (player.GetX() < 140)
-				player.SetX(140);
-			else if (player.GetX() > 320)
-				player.SetX(320);
+			if (player.GetX() < x_min)
+				player.SetX(x_min);
+			else if (player.GetX() > x_max)
+				player.SetX(x_max);
 
-			if (player.GetY() > 260)
-				player.SetY(260);
-			else if (player.GetY() < 190)
-				player.SetY(190);
+			if (player.GetY() > y_max)
+				player.SetY(y_max);
+			else if (player.GetY() < y_min)
+				player.SetY(y_min);
 
 			// horizontal scrolling
-			if ((player.GetX() == 320 || player.GetX() == 140) && player.GetXVel())
+			if ((player.GetX() == x_max || player.GetX() == x_min) && player.GetXVel())
 			{
 				bool scroll_collision = false;
 				unsigned int i;
@@ -489,7 +517,7 @@ int main(int argc, char** argv)
 				}
 			}
 			// vertical scrolling
-			if ((player.GetY() == 260 || player.GetY() == 190) && player.GetYVel())
+			if ((player.GetY() == y_max || player.GetY() == y_min) && player.GetYVel())
 			{
 				bool scroll_collision = false;
 				unsigned int i;
@@ -526,18 +554,18 @@ int main(int argc, char** argv)
 				}
 			}
 			// move everything so the player is closer to the middle
-			if (player.GetY() != 230 && player.GetYVel() == 0)
+			if (player.GetY() != y_scroll_correction && player.GetYVel() == 0)
 			{
 				float player_y = player.GetY();
-				if (player_y > 230)
+				if (player_y > y_scroll_correction)
 				{
-					if (player_y - 1 < 230)
+					if (player_y - 1 < y_scroll_correction)
 					{
 						for (unsigned int i = 0; i < collidables.size() - 1; i++)
-							collidables[i]->SetY(collidables[i]->GetY() - (player.GetY() - 230));
+							collidables[i]->SetY(collidables[i]->GetY() - (player.GetY() - y_scroll_correction));
 						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() - (player.GetY() - 230));
-						player.SetY(player.GetY() - (player.GetY() - 230));
+							drawables[i]->SetY(drawables[i]->GetY() - (player.GetY() - y_scroll_correction));
+						player.SetY(player.GetY() - (player.GetY() - y_scroll_correction));
 					}
 					else
 					{
@@ -546,24 +574,24 @@ int main(int argc, char** argv)
 						for (unsigned int i = 0; i < drawables.size() - 1; i++)
 							drawables[i]->SetY(drawables[i]->GetY() - 1);
 					}
-					if (player.GetY() < 230)
+					if (player.GetY() < y_scroll_correction)
 					{
 						player_y = player.GetY();
 						for (unsigned int i = 0; i < collidables.size(); i++)
-							collidables[i]->SetY(collidables[i]->GetY() + (230 - player_y));
+							collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player_y));
 						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() + (230 - player_y));
+							drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player_y));
 					}
 				}
-				else if (player_y < 230)
+				else if (player_y < y_scroll_correction)
 				{
-					if (player_y + 1 > 230)
+					if (player_y + 1 > y_scroll_correction)
 					{
 						for (unsigned int i = 0; i < collidables.size() - 1; i++)
-							collidables[i]->SetY(collidables[i]->GetY() + (230 - player.GetY()));
+							collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player.GetY()));
 						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() + (230 - player.GetY()));
-						player.SetY(player.GetY() - (player.GetY() - 230));
+							drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player.GetY()));
+						player.SetY(player.GetY() - (player.GetY() - y_scroll_correction));
 					}
 					else
 					{
@@ -572,14 +600,15 @@ int main(int argc, char** argv)
 						for (unsigned int i = 0; i < drawables.size() - 1; i++)
 							drawables[i]->SetY(drawables[i]->GetY() + 1);
 					}
-					if (player.GetY() > 230)
+					if (player.GetY() > y_scroll_correction)
 					{
+						cout << "furp" << endl;
 						player_y = player.GetY();
 						for (unsigned int i = 0; i < collidables.size() - 1; i++)
-							collidables[i]->SetY(collidables[i]->GetY() + (230 - player_y));
+							collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player_y));
 						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() + (230 - player_y));
-						player.SetY(player.GetY() - (230 - player_y));
+							drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player_y));
+						player.SetY(player.GetY() - (y_scroll_correction - player_y));
 					}
 				}
 			}
@@ -679,6 +708,12 @@ int main(int argc, char** argv)
 			{
 				drawables[i]->Render();
 			}
+
+			al_draw_rectangle(x_min, y_min, x_min - 10, y_max, al_map_rgb(255, 0, 0), 0);
+			al_draw_rectangle(x_max + 16, y_min, x_max + 26, y_max, al_map_rgb(255, 0, 0), 0);
+
+			al_draw_rectangle(x_min, y_min, x_max + 16, y_min + 10, al_map_rgb(0, 0, 255), 0);
+			al_draw_rectangle(x_min, y_max, x_max + 16, y_max - 10, al_map_rgb(0, 0, 255), 0);
 
 			// player position and velocity
 //			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "x: %.2f", player.GetX());
