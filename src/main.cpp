@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 
 	// x, y, x_bound, y_bound, sheet_x, sheet_y, sprite_sheet
 	// lower middle
-	peach::Scenery brick_1(145, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_1(145, 280, 20, 20, 60, 0, (void*) scenery_sheet);
 	peach::Scenery brick_2(165, 280, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_3(185, 280, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_4(205, 280, 20, 20, 40, 0, (void*) scenery_sheet);
@@ -124,16 +124,16 @@ int main(int argc, char** argv)
 	peach::Scenery brick_7(265, 280, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_8(285, 280, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_9(305, 280, 20, 20, 40, 0, (void*) scenery_sheet);
-	peach::Scenery brick_10(325, 280, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_10(325, 280, 20, 20, 80, 0, (void*) scenery_sheet);
 
 	// left
-	peach::Scenery brick_11(365, 320, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_11(365, 320, 20, 20, 60, 0, (void*) scenery_sheet);
 	peach::Scenery brick_12(385, 320, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_13(405, 320, 20, 20, 40, 0, (void*) scenery_sheet);
-	peach::Scenery brick_14(425, 320, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_14(425, 320, 20, 20, 80, 0, (void*) scenery_sheet);
 
 	// right
-	peach::Scenery brick_15(380, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_15(380, 210, 20, 20, 60, 0, (void*) scenery_sheet);
 	peach::Scenery brick_16(400, 210, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_17(420, 210, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_18(440, 210, 20, 20, 40, 0, (void*) scenery_sheet);
@@ -142,10 +142,10 @@ int main(int argc, char** argv)
 	peach::Scenery brick_21(500, 210, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_22(520, 210, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_23(540, 210, 20, 20, 40, 0, (void*) scenery_sheet);
-	peach::Scenery brick_24(560, 210, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_24(560, 210, 20, 20, 80, 0, (void*) scenery_sheet);
 
 	// upper middle
-	peach::Scenery brick_25(145, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_25(145, 130, 20, 20, 60, 0, (void*) scenery_sheet);
 	peach::Scenery brick_26(165, 130, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_27(185, 130, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_28(205, 130, 20, 20, 40, 0, (void*) scenery_sheet);
@@ -154,21 +154,21 @@ int main(int argc, char** argv)
 	peach::Scenery brick_31(265, 130, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_32(285, 130, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_33(305, 130, 20, 20, 40, 0, (void*) scenery_sheet);
-	peach::Scenery brick_34(325, 130, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_34(325, 130, 20, 20, 80, 0, (void*) scenery_sheet);
 
 	// upper right
-	peach::Scenery brick_35(430, 150, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_35(430, 150, 20, 20, 60, 0, (void*) scenery_sheet);
 	peach::Scenery brick_36(450, 150, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_37(470, 150, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_38(490, 150, 20, 20, 40, 0, (void*) scenery_sheet);
-	peach::Scenery brick_39(510, 150, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_39(510, 150, 20, 20, 80, 0, (void*) scenery_sheet);
 
 	// upper upper right
-	peach::Scenery brick_40(450, 80, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_40(450, 80, 20, 20, 60, 0, (void*) scenery_sheet);
 	peach::Scenery brick_41(470, 80, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_42(490, 80, 20, 20, 40, 0, (void*) scenery_sheet);
 	peach::Scenery brick_43(510, 80, 20, 20, 40, 0, (void*) scenery_sheet);
-	peach::Scenery brick_44(530, 80, 20, 20, 40, 0, (void*) scenery_sheet);
+	peach::Scenery brick_44(530, 80, 20, 20, 80, 0, (void*) scenery_sheet);
 
 	// floor
 	peach::Scenery brick_45(0, 390, 20, 20, 0, 0, (void*) scenery_sheet);
@@ -699,10 +699,10 @@ int main(int argc, char** argv)
 		{
 			redraw = false;
 
-			for (unsigned int i = 0; i < collidables.size(); i++)
-			{
-				collidables[i]->Render();
-			}
+//			for (unsigned int i = 0; i < collidables.size(); i++)
+//			{
+//				collidables[i]->Render();
+//			}
 
 			for (unsigned int i = 0; i < drawables.size(); i++)
 			{
