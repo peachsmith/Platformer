@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+configuration file
+	
+--------------
+default values
+--------------
+background:
+	red: 0
+	green: 139
+	blue: 174
+-->
+<configuration>
+	<background>
+		<red>0</red>
+		<green>139</green>
+		<blue>174</blue>
+	</background>
+</configuration>

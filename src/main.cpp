@@ -2,8 +2,7 @@
 #include "Player.h"
 #include "Terrain.h"
 #include "Scenery.h"
-#include <iostream>
-#include <fstream>
+#include "pxp.h"
 
 using namespace std;
 
@@ -338,20 +337,61 @@ int main(int argc, char** argv)
 	//=================================
 	// CONFIGURATION
 	//=================================
-	ifstream config("res/background.txt");
+	ifstream config("res/configuration.xml");
 	int background[3] =
-	{ 0, 0, 0 };
+	{ 0, 139, 174 };
 	if (config.is_open())
 	{
-		string color_name;
-		int color_value;
-		int bg_i = 0; // background index
-		while (config >> color_name && config >> color_value)
+		stringstream parse_stream;
+		stringstream config_stream;
+		config_stream << config.rdbuf();
+		string source = config_stream.str();
+
+		int config_error = peach::validate(source, parse_stream);
+
+		if (!config_error)
 		{
-			if (bg_i < 3)
-				background[bg_i++] = color_value;
+			peach::elem_t* root = peach::parse(parse_stream.str());
+			if (root)
+			{
+				vector<peach::elem_t*> bg, bg_r, bg_g, bg_b;
+
+				bg = peach::getElementsByName(root, "background");
+
+				// set the background color
+				if (bg.size() > 0)
+				{
+					bg_r = peach::getElementsByName(bg[0], "red");
+					bg_g = peach::getElementsByName(bg[0], "green");
+					bg_b = peach::getElementsByName(bg[0], "blue");
+
+					if (bg_r.size() > 0 && bg_g.size() > 0 && bg_b.size() > 0)
+					{
+						if (bg_r[0]->text.size() > 0 && bg_g[0]->text.size() > 0 && bg_b[0]->text.size() > 0)
+						{
+							background[0] = atof(bg_r[0]->text[0].c_str());
+							background[1] = atof(bg_g[0]->text[0].c_str());
+							background[2] = atof(bg_b[0]->text[0].c_str());
+						}
+					}
+				}
+				peach::destroyElements(root);
+			}
+		}
+		else
+		{
+			cout << "xml validation error: " << config_error << endl;
 		}
 	}
+	else
+	{
+		cout << "could not open configuration file" << endl;
+	}
+
+	//=================================
+	// GAME STATE
+	//=================================
+	int state = 0;
 
 	//=================================
 	// MAIN GAME LOOP

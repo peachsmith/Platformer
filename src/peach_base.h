@@ -1,7 +1,9 @@
 #ifndef PEACH_BASE_H_
 #define PEACH_BASE_H_
 
+#include <stdlib.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
