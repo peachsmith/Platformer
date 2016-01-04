@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Terrain.h"
 #include "Scenery.h"
+#include "Menu.h"
 #include "pxp.h"
 
 using namespace std;
@@ -394,6 +395,21 @@ int main(int argc, char** argv)
 	int state = 0;
 
 	//=================================
+	// MENUS
+	//=================================
+	int pause_x = screen_width / 4;
+	int pause_y = screen_height / 4;
+	int pause_w = screen_width / 2;
+	int pause_h = screen_height / 2;
+
+	vector<peach::MenuItem> pause_items;
+	peach::MenuItem resume_item("resume", pause_x + 35, pause_y + 20, (void*) font);
+	peach::MenuItem quit_item("quit", pause_x + 35, pause_y + 40, (void*) font);
+	pause_items.push_back(resume_item);
+	pause_items.push_back(quit_item);
+	peach::Menu pause_menu(pause_x, pause_y, pause_w, pause_h, pause_items);
+
+	//=================================
 	// MAIN GAME LOOP
 	//=================================
 	while (!done)
@@ -405,255 +421,257 @@ int main(int argc, char** argv)
 		{
 			redraw = true;
 
-			// move the player
-			if (keys[peach::LEFT] && !keys[peach::RIGHT])
+			if (state == peach::NORMAL)
 			{
-				player.Move(2); // move player left
-			}
-			else if (keys[peach::RIGHT] && !keys[peach::LEFT])
-			{
-				player.Move(3); // move player right
-			}
-			else if ((!keys[peach::RIGHT] && !keys[peach::LEFT]) || (keys[peach::RIGHT] && keys[peach::LEFT]))
-				player.SlowDown(); // slow to s stop
-
-			// handle player jumping
-			if (keys[peach::SPACE] && !player.GetJumping())
-				player.Jump();
-
-			// update
-			for (unsigned int i = 0; i < collidables.size(); i++)
-			{
-				// set jumping to true in case the entity is in the air
-				collidables[i]->UpdateX();
-				collidables[i]->SetJumping(true);
-
-				for (unsigned int j = 0; j < collidables.size(); j++)
+				// move the player
+				if (keys[peach::LEFT] && !keys[peach::RIGHT])
 				{
-					if (collidables[i]->GetID() == collidables[j]->GetID())
-					{
-						continue; // for now, two Entities with the same ID cannot collide
-					}
-
-					if (collidables[i]->CheckCollision(collidables[j], x_depth, y_depth) >= 15)
-					{
-						// ignore false collision due to floating point nonsense
-						if (y_depth < 0 && y_depth > -.1)
-							continue;
-						else if (y_depth > 0 && y_depth < .1)
-							continue;
-
-						collidables[i]->SetX(collidables[i]->GetX() - x_depth);
-
-						if (player.GetX() < x_min)
-						{
-							float x_overshoot = x_min - player.GetX();
-							for (unsigned int k = 0; k < collidables.size(); k++)
-								collidables[k]->SetX(collidables[k]->GetX() + x_overshoot);
-							for (unsigned int k = 0; k < drawables.size() - 1; k++)
-								drawables[k]->SetX(drawables[k]->GetX() + x_overshoot);
-						}
-						else if (player.GetX() >= x_max)
-						{
-							float x_overshoot = player.GetX() - x_max;
-							for (unsigned int k = 0; k < collidables.size(); k++)
-								collidables[k]->SetX(collidables[k]->GetX() - x_overshoot);
-							for (unsigned int k = 0; k < drawables.size() - 1; k++)
-								drawables[k]->SetX(drawables[k]->GetX() - x_overshoot);
-						}
-
-						collidables[i]->Collide(collidables[j]->GetID());
-						if (x_depth)
-							collidables[i]->SetXVel(0);
-					}
+					player.Move(2); // move player left
 				}
-				collidables[i]->UpdateY();
-				for (unsigned int j = 0; j < collidables.size(); j++)
+				else if (keys[peach::RIGHT] && !keys[peach::LEFT])
 				{
-					if (collidables[i]->GetID() == collidables[j]->GetID())
-					{
-						continue; // for now, two Entities with the same ID cannot collide
-					}
-
-					if (collidables[i]->CheckCollision(collidables[j], x_depth, y_depth) >= 15)
-					{
-						// resolve vertical collision
-						collidables[i]->SetY(collidables[i]->GetY() - y_depth);
-
-						if (player.GetY() < y_min)
-						{
-							float y_overshoot = y_min - player.GetY();
-							for (unsigned int i = 0; i < collidables.size(); i++)
-								collidables[i]->SetY(collidables[i]->GetY() + y_overshoot);
-							for (unsigned int i = 0; i < drawables.size() - 1; i++)
-								drawables[i]->SetY(drawables[i]->GetY() + y_overshoot);
-						}
-						else if (player.GetY() >= y_max)
-						{
-							float y_overshoot = player.GetY() - y_max;
-							for (unsigned int i = 0; i < collidables.size(); i++)
-								collidables[i]->SetY(collidables[i]->GetY() - y_overshoot);
-							for (unsigned int i = 0; i < drawables.size() - 1; i++)
-								drawables[i]->SetY(drawables[i]->GetY() - y_overshoot);
-						}
-
-						collidables[i]->Collide(collidables[j]->GetID());
-						if (y_depth)
-							collidables[i]->SetYVel(0);
-						// if the bottom of the entity collides with something, set jumping to false
-						if (y_depth > 0)
-						{
-							collidables[i]->SetJumping(false);
-						}
-					}
+					player.Move(3); // move player right
 				}
-			}
+				else if ((!keys[peach::RIGHT] && !keys[peach::LEFT]) || (keys[peach::RIGHT] && keys[peach::LEFT]))
+					player.SlowDown(); // slow to s stop
 
-			if (player.GetX() < x_min)
-				player.SetX(x_min);
-			else if (player.GetX() > x_max)
-				player.SetX(x_max);
+				// handle player jumping
+				if (keys[peach::SPACE] && !player.GetJumping())
+					player.Jump();
 
-			if (player.GetY() > y_max)
-				player.SetY(y_max);
-			else if (player.GetY() < y_min)
-				player.SetY(y_min);
-
-			// horizontal scrolling
-			if ((player.GetX() == x_max || player.GetX() == x_min) && player.GetXVel())
-			{
-				bool scroll_collision = false;
-				unsigned int i;
-				for (i = 0; i < collidables.size(); i++)
+				// update
+				for (unsigned int i = 0; i < collidables.size(); i++)
 				{
-					if (collidables[i]->GetID() != peach::PLAYER)
+					// set jumping to true in case the entity is in the air
+					collidables[i]->UpdateX();
+					collidables[i]->SetJumping(true);
+
+					for (unsigned int j = 0; j < collidables.size(); j++)
 					{
-						collidables[i]->SetX(collidables[i]->GetX() - player.GetXVel());
-						if (collidables[i]->CheckCollision((&player), x_depth, y_depth) >= 15)
+						if (collidables[i]->GetID() == collidables[j]->GetID())
 						{
-							scroll_collision = true;
-							break;
+							continue; // for now, two Entities with the same ID cannot collide
+						}
+
+						if (collidables[i]->CheckCollision(collidables[j], x_depth, y_depth) >= 15)
+						{
+							// ignore false collision due to floating point nonsense
+							if (y_depth < 0 && y_depth > -.1)
+								continue;
+							else if (y_depth > 0 && y_depth < .1)
+								continue;
+
+							collidables[i]->SetX(collidables[i]->GetX() - x_depth);
+
+							if (player.GetX() < x_min)
+							{
+								float x_overshoot = x_min - player.GetX();
+								for (unsigned int k = 0; k < collidables.size(); k++)
+									collidables[k]->SetX(collidables[k]->GetX() + x_overshoot);
+								for (unsigned int k = 0; k < drawables.size() - 1; k++)
+									drawables[k]->SetX(drawables[k]->GetX() + x_overshoot);
+							}
+							else if (player.GetX() >= x_max)
+							{
+								float x_overshoot = player.GetX() - x_max;
+								for (unsigned int k = 0; k < collidables.size(); k++)
+									collidables[k]->SetX(collidables[k]->GetX() - x_overshoot);
+								for (unsigned int k = 0; k < drawables.size() - 1; k++)
+									drawables[k]->SetX(drawables[k]->GetX() - x_overshoot);
+							}
+
+							collidables[i]->Collide(collidables[j]->GetID());
+							if (x_depth)
+								collidables[i]->SetXVel(0);
+						}
+					}
+					collidables[i]->UpdateY();
+					for (unsigned int j = 0; j < collidables.size(); j++)
+					{
+						if (collidables[i]->GetID() == collidables[j]->GetID())
+						{
+							continue; // for now, two Entities with the same ID cannot collide
+						}
+
+						if (collidables[i]->CheckCollision(collidables[j], x_depth, y_depth) >= 15)
+						{
+							// resolve vertical collision
+							collidables[i]->SetY(collidables[i]->GetY() - y_depth);
+
+							if (player.GetY() < y_min)
+							{
+								float y_overshoot = y_min - player.GetY();
+								for (unsigned int i = 0; i < collidables.size(); i++)
+									collidables[i]->SetY(collidables[i]->GetY() + y_overshoot);
+								for (unsigned int i = 0; i < drawables.size() - 1; i++)
+									drawables[i]->SetY(drawables[i]->GetY() + y_overshoot);
+							}
+							else if (player.GetY() >= y_max)
+							{
+								float y_overshoot = player.GetY() - y_max;
+								for (unsigned int i = 0; i < collidables.size(); i++)
+									collidables[i]->SetY(collidables[i]->GetY() - y_overshoot);
+								for (unsigned int i = 0; i < drawables.size() - 1; i++)
+									drawables[i]->SetY(drawables[i]->GetY() - y_overshoot);
+							}
+
+							collidables[i]->Collide(collidables[j]->GetID());
+							if (y_depth)
+								collidables[i]->SetYVel(0);
+							// if the bottom of the entity collides with something, set jumping to false
+							if (y_depth > 0)
+							{
+								collidables[i]->SetJumping(false);
+							}
 						}
 					}
 				}
-				// resolve collisions due to scrolling
-				if (scroll_collision)
+
+				if (player.GetX() < x_min)
+					player.SetX(x_min);
+				else if (player.GetX() > x_max)
+					player.SetX(x_max);
+
+				if (player.GetY() > y_max)
+					player.SetY(y_max);
+				else if (player.GetY() < y_min)
+					player.SetY(y_min);
+
+				// horizontal scrolling
+				if ((player.GetX() == x_max || player.GetX() == x_min) && player.GetXVel())
 				{
-					for (; i > 0; i--)
+					bool scroll_collision = false;
+					unsigned int i;
+					for (i = 0; i < collidables.size(); i++)
 					{
 						if (collidables[i]->GetID() != peach::PLAYER)
 						{
-							collidables[i]->SetX(collidables[i]->GetX() + player.GetXVel());
+							collidables[i]->SetX(collidables[i]->GetX() - player.GetXVel());
+							if (collidables[i]->CheckCollision((&player), x_depth, y_depth) >= 15)
+							{
+								scroll_collision = true;
+								break;
+							}
 						}
 					}
-					collidables[i]->SetX(collidables[i]->GetX() + player.GetXVel());
-					player.SetXVel(0);
-				}
-				else
-				{
-					// scenery horizontal scrolling
-					for (unsigned int i = 0; i < drawables.size() - 1; i++)
-						drawables[i]->SetX(drawables[i]->GetX() - player.GetXVel());
-				}
-			}
-			// vertical scrolling
-			if ((player.GetY() == y_max || player.GetY() == y_min) && player.GetYVel())
-			{
-				bool scroll_collision = false;
-				unsigned int i;
-				for (i = 0; i < collidables.size(); i++)
-				{
-					if (collidables[i]->GetID() != peach::PLAYER)
+					// resolve collisions due to scrolling
+					if (scroll_collision)
 					{
-						collidables[i]->SetY(collidables[i]->GetY() - player.GetYVel());
-						if (collidables[i]->CheckCollision((&player), x_depth, y_depth) >= 15)
+						for (; i > 0; i--)
 						{
-							scroll_collision = true;
-							break;
+							if (collidables[i]->GetID() != peach::PLAYER)
+							{
+								collidables[i]->SetX(collidables[i]->GetX() + player.GetXVel());
+							}
 						}
+						collidables[i]->SetX(collidables[i]->GetX() + player.GetXVel());
+						player.SetXVel(0);
+					}
+					else
+					{
+						// scenery horizontal scrolling
+						for (unsigned int i = 0; i < drawables.size() - 1; i++)
+							drawables[i]->SetX(drawables[i]->GetX() - player.GetXVel());
 					}
 				}
-				// resolve collisions due to scrolling
-				if (scroll_collision)
+				// vertical scrolling
+				if ((player.GetY() == y_max || player.GetY() == y_min) && player.GetYVel())
 				{
-					for (; i > 0; i--)
+					bool scroll_collision = false;
+					unsigned int i;
+					for (i = 0; i < collidables.size(); i++)
 					{
 						if (collidables[i]->GetID() != peach::PLAYER)
 						{
-							collidables[i]->SetY(collidables[i]->GetY() + player.GetYVel());
+							collidables[i]->SetY(collidables[i]->GetY() - player.GetYVel());
+							if (collidables[i]->CheckCollision((&player), x_depth, y_depth) >= 15)
+							{
+								scroll_collision = true;
+								break;
+							}
 						}
 					}
-					collidables[i]->SetY(collidables[i]->GetY() + player.GetYVel());
-					player.SetYVel(0);
-				}
-				else
-				{
-					// scenery vertical scrolling
-					for (unsigned int i = 0; i < drawables.size() - 1; i++)
-						drawables[i]->SetY(drawables[i]->GetY() - player.GetYVel());
-				}
-			}
-			// move everything so the player is closer to the middle
-			if (player.GetY() != y_scroll_correction && player.GetYVel() == 0)
-			{
-				float player_y = player.GetY();
-				if (player_y > y_scroll_correction)
-				{
-					if (player_y - 1 < y_scroll_correction)
+					// resolve collisions due to scrolling
+					if (scroll_collision)
 					{
-						for (unsigned int i = 0; i < collidables.size() - 1; i++)
-							collidables[i]->SetY(collidables[i]->GetY() - (player.GetY() - y_scroll_correction));
-						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() - (player.GetY() - y_scroll_correction));
-						player.SetY(player.GetY() - (player.GetY() - y_scroll_correction));
+						for (; i > 0; i--)
+						{
+							if (collidables[i]->GetID() != peach::PLAYER)
+							{
+								collidables[i]->SetY(collidables[i]->GetY() + player.GetYVel());
+							}
+						}
+						collidables[i]->SetY(collidables[i]->GetY() + player.GetYVel());
+						player.SetYVel(0);
 					}
 					else
 					{
-						for (unsigned int i = 0; i < collidables.size(); i++)
-							collidables[i]->SetY(collidables[i]->GetY() - 1);
+						// scenery vertical scrolling
 						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() - 1);
-					}
-					if (player.GetY() < y_scroll_correction)
-					{
-						player_y = player.GetY();
-						for (unsigned int i = 0; i < collidables.size(); i++)
-							collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player_y));
-						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player_y));
+							drawables[i]->SetY(drawables[i]->GetY() - player.GetYVel());
 					}
 				}
-				else if (player_y < y_scroll_correction)
+				// move everything so the player is closer to the middle
+				if (player.GetY() != y_scroll_correction && player.GetYVel() == 0)
 				{
-					if (player_y + 1 > y_scroll_correction)
+					float player_y = player.GetY();
+					if (player_y > y_scroll_correction)
 					{
-						for (unsigned int i = 0; i < collidables.size() - 1; i++)
-							collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player.GetY()));
-						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player.GetY()));
-						player.SetY(player.GetY() - (player.GetY() - y_scroll_correction));
+						if (player_y - 1 < y_scroll_correction)
+						{
+							for (unsigned int i = 0; i < collidables.size() - 1; i++)
+								collidables[i]->SetY(collidables[i]->GetY() - (player.GetY() - y_scroll_correction));
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() - (player.GetY() - y_scroll_correction));
+							player.SetY(player.GetY() - (player.GetY() - y_scroll_correction));
+						}
+						else
+						{
+							for (unsigned int i = 0; i < collidables.size(); i++)
+								collidables[i]->SetY(collidables[i]->GetY() - 1);
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() - 1);
+						}
+						if (player.GetY() < y_scroll_correction)
+						{
+							player_y = player.GetY();
+							for (unsigned int i = 0; i < collidables.size(); i++)
+								collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player_y));
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player_y));
+						}
 					}
-					else
+					else if (player_y < y_scroll_correction)
 					{
-						for (unsigned int i = 0; i < collidables.size(); i++)
-							collidables[i]->SetY(collidables[i]->GetY() + 1);
-						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() + 1);
-					}
-					if (player.GetY() > y_scroll_correction)
-					{
-						cout << "furp" << endl;
-						player_y = player.GetY();
-						for (unsigned int i = 0; i < collidables.size() - 1; i++)
-							collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player_y));
-						for (unsigned int i = 0; i < drawables.size() - 1; i++)
-							drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player_y));
-						player.SetY(player.GetY() - (y_scroll_correction - player_y));
+						if (player_y + 1 > y_scroll_correction)
+						{
+							for (unsigned int i = 0; i < collidables.size() - 1; i++)
+								collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player.GetY()));
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player.GetY()));
+							player.SetY(player.GetY() - (player.GetY() - y_scroll_correction));
+						}
+						else
+						{
+							for (unsigned int i = 0; i < collidables.size(); i++)
+								collidables[i]->SetY(collidables[i]->GetY() + 1);
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() + 1);
+						}
+						if (player.GetY() > y_scroll_correction)
+						{
+							cout << "furp" << endl;
+							player_y = player.GetY();
+							for (unsigned int i = 0; i < collidables.size() - 1; i++)
+								collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player_y));
+							for (unsigned int i = 0; i < drawables.size() - 1; i++)
+								drawables[i]->SetY(drawables[i]->GetY() + (y_scroll_correction - player_y));
+							player.SetY(player.GetY() - (y_scroll_correction - player_y));
+						}
 					}
 				}
 			}
 		}
-
 		else if (al_event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 		{
 			done = true;
@@ -716,6 +734,7 @@ int main(int argc, char** argv)
 				keys[peach::RIGHT] = false;
 				break;
 			case ALLEGRO_KEY_A:
+				state ^= 1;
 				keys[peach::A] = false;
 				break;
 			case ALLEGRO_KEY_Z:
@@ -748,6 +767,14 @@ int main(int argc, char** argv)
 			{
 				drawables[i]->Render();
 			}
+
+			if (state == peach::PAUSE)
+			{
+				pause_menu.Render();
+			}
+
+			// state
+			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "state: %i", state);
 
 //			al_draw_rectangle(x_min, y_min, x_min - 10, y_max, al_map_rgb(255, 0, 0), 0);
 //			al_draw_rectangle(x_max + 16, y_min, x_max + 26, y_max, al_map_rgb(255, 0, 0), 0);

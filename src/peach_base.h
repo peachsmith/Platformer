@@ -22,6 +22,10 @@ enum keys
 {
 	UP, DOWN, LEFT, RIGHT, A, Z, X, SPACE
 };
+enum state
+{
+	NORMAL, PAUSE
+};
 
 }
 
