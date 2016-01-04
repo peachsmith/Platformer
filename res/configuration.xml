@@ -2,9 +2,9 @@
 <!--
 configuration file
 	
---------------
-default values
---------------
+==============
+DEFAULT VALUES
+==============
 background:
 	red: 0
 	green: 139
