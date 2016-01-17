@@ -20,11 +20,16 @@ enum ID
 };
 enum keys
 {
-	UP, DOWN, LEFT, RIGHT, A, Z, X, SPACE
+	UP, DOWN, LEFT, RIGHT, A, Z, X, SPACE, ENTER
 };
 enum state
 {
 	NORMAL, PAUSE
+};
+
+enum menu_item_id
+{
+	PAUSE_MENU_RESUME, PAUSE_MENU_QUIT, PAUSE_MENU_INFO
 };
 
 }

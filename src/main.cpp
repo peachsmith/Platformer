@@ -15,20 +15,20 @@ int main(int argc, char** argv)
 	const int FPS = 60;
 	bool done = false;
 	bool redraw = true;
-	bool keys[8] =
-	{ false, false, false, false, false, false, false, false };
-	int screen_width;
-	int screen_height;
-	int x_min;
-	int x_max;
-	int y_min;
-	int y_max;
-	int y_scroll_correction;
+	bool keys[9] =
+	{ false, false, false, false, false, false, false, false, false };
+	int screen_width = 700;
+	int screen_height = 600;
+	int x_min = 270;
+	int x_max = 410;
+	int y_min = 330;
+	int y_max = 360;
+	int y_scroll_correction = 315;
+	int info = 0;
 
 	//=================================
 	// ALLEGRO VARIABLES
 	//=================================
-	ALLEGRO_MONITOR_INFO monitor_info;
 	ALLEGRO_DISPLAY* display = 0;
 	ALLEGRO_EVENT_QUEUE* event_queue = 0;
 	ALLEGRO_TIMER* timer = 0;
@@ -47,26 +47,6 @@ int main(int argc, char** argv)
 	al_init_image_addon();
 	al_init_font_addon();
 	al_init_ttf_addon();
-
-	al_get_monitor_info(0, &monitor_info);
-
-	if (monitor_info.x2 - monitor_info.x1 > 800)
-		screen_width = 700;
-	else
-		screen_width = monitor_info.x2 - monitor_info.x1 - 1;
-
-	if (monitor_info.y2 - monitor_info.y1 > 800)
-		screen_height = 600;
-	else
-		screen_height = monitor_info.y2 - monitor_info.y1 - 1;
-
-	x_min = screen_width / 5 * 2 - 10;
-	x_max = screen_width / 5 * 3 - 10;
-
-	y_min = screen_height / 5 * 3 - 30;
-	y_max = screen_height / 5 * 3;
-
-	y_scroll_correction = y_max / 8 * 7;
 
 	//al_set_new_display_flags(ALLEGRO_FRAMELESS);
 	display = al_create_display(screen_width, screen_height);
@@ -392,22 +372,38 @@ int main(int argc, char** argv)
 	//=================================
 	// GAME STATE
 	//=================================
-	int state = 0;
+	int state = peach::NORMAL;
+	int pause = 0;
 
 	//=================================
 	// MENUS
 	//=================================
-	int pause_x = screen_width / 4;
-	int pause_y = screen_height / 4;
+	float pause_x = screen_width / 4;
+	float pause_y = screen_height / 4;
 	int pause_w = screen_width / 2;
 	int pause_h = screen_height / 2;
 
 	vector<peach::MenuItem> pause_items;
-	peach::MenuItem resume_item("resume", pause_x + 35, pause_y + 20, (void*) font);
-	peach::MenuItem quit_item("quit", pause_x + 35, pause_y + 40, (void*) font);
+	peach::MenuItem resume_item(peach::PAUSE_MENU_RESUME, "resume", pause_x + 35, pause_y + 20, (void*) font);
+	peach::MenuItem quit_item(peach::PAUSE_MENU_QUIT, "quit", pause_x + 35, pause_y + 40, (void*) font);
+	peach::MenuItem poop_item(peach::PAUSE_MENU_INFO, "info", pause_x + 130, pause_y + 20, (void*) font);
 	pause_items.push_back(resume_item);
 	pause_items.push_back(quit_item);
-	peach::Menu pause_menu(pause_x, pause_y, pause_w, pause_h, pause_items);
+	pause_items.push_back(poop_item);
+
+	int** pause_cursor_coords = new int*[2];
+	for (int i = 0; i < 3; i++)
+		pause_cursor_coords[i] = new int[2];
+
+	pause_cursor_coords[0][0] = pause_x + 35 - 15;
+	pause_cursor_coords[0][1] = pause_x + 130 - 15;
+
+	pause_cursor_coords[1][0] = pause_x + 35 - 15;
+	pause_cursor_coords[1][1] = -1;
+
+	peach::MenuCursor pause_cursor(pause_cursor_coords, 0, 0, 2, 2, pause_y + 25);
+
+	peach::Menu pause_menu(pause_x, pause_y, pause_w, pause_h, pause_items, &pause_cursor);
 
 	//=================================
 	// MAIN GAME LOOP
@@ -421,7 +417,7 @@ int main(int argc, char** argv)
 		{
 			redraw = true;
 
-			if (state == peach::NORMAL)
+			if (state == peach::NORMAL && pause == 0)
 			{
 				// move the player
 				if (keys[peach::LEFT] && !keys[peach::RIGHT])
@@ -660,7 +656,6 @@ int main(int argc, char** argv)
 						}
 						if (player.GetY() > y_scroll_correction)
 						{
-							cout << "furp" << endl;
 							player_y = player.GetY();
 							for (unsigned int i = 0; i < collidables.size() - 1; i++)
 								collidables[i]->SetY(collidables[i]->GetY() + (y_scroll_correction - player_y));
@@ -670,6 +665,11 @@ int main(int argc, char** argv)
 						}
 					}
 				}
+			}
+			else if (state == peach::PAUSE)
+			{
+				// pause menu functionality
+
 			}
 		}
 		else if (al_event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -681,6 +681,29 @@ int main(int argc, char** argv)
 		//=================================
 		else if (al_event.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
+			if (pause == 1)
+			{
+				int action;
+				action = pause_menu.HandleKeyboardInput(al_event.keyboard.keycode);
+				switch (action)
+				{
+				case peach::PAUSE_MENU_RESUME:
+					pause_menu.Close();
+					pause = 0;
+					break;
+				case peach::PAUSE_MENU_QUIT:
+					done = true;
+					break;
+				case peach::PAUSE_MENU_INFO:
+					if (info == 0)
+						info = 1;
+					else
+						info = 0;
+					break;
+				default:
+					break;
+				}
+			}
 			switch (al_event.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_UP:
@@ -710,6 +733,9 @@ int main(int argc, char** argv)
 			case ALLEGRO_KEY_SPACE:
 				keys[peach::SPACE] = true;
 				break;
+			case ALLEGRO_KEY_ENTER:
+				keys[peach::ENTER] = true;
+				break;
 			default:
 				break;
 			}
@@ -719,7 +745,16 @@ int main(int argc, char** argv)
 			switch (al_event.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_ESCAPE:
-				done = true;
+				if (pause == 0)
+				{
+					pause = 1;
+					pause_menu.Open();
+				}
+				else
+				{
+					pause = 0;
+					pause_menu.Close();
+				}
 				break;
 			case ALLEGRO_KEY_UP:
 				keys[peach::UP] = false;
@@ -734,7 +769,6 @@ int main(int argc, char** argv)
 				keys[peach::RIGHT] = false;
 				break;
 			case ALLEGRO_KEY_A:
-				state ^= 1;
 				keys[peach::A] = false;
 				break;
 			case ALLEGRO_KEY_Z:
@@ -745,6 +779,9 @@ int main(int argc, char** argv)
 				break;
 			case ALLEGRO_KEY_SPACE:
 				keys[peach::SPACE] = false;
+				break;
+			case ALLEGRO_KEY_ENTER:
+				keys[peach::ENTER] = false;
 				break;
 			default:
 				break;
@@ -768,29 +805,32 @@ int main(int argc, char** argv)
 				drawables[i]->Render();
 			}
 
-			if (state == peach::PAUSE)
+			if (pause == 1)
 			{
 				pause_menu.Render();
 			}
 
-			// state
-			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "state: %i", state);
-
+//			// x scroll boundariess
 //			al_draw_rectangle(x_min, y_min, x_min - 10, y_max, al_map_rgb(255, 0, 0), 0);
 //			al_draw_rectangle(x_max + 16, y_min, x_max + 26, y_max, al_map_rgb(255, 0, 0), 0);
 //
-//			al_draw_rectangle(x_min, y_min, x_max + 16, y_min + 10, al_map_rgb(0, 0, 255), 0);
-//			al_draw_rectangle(x_min, y_max, x_max + 16, y_max - 10, al_map_rgb(0, 0, 255), 0);
+//			// y scroll boundariess
+//			al_draw_rectangle(x_min, y_min - 10, x_max + 16, y_min, al_map_rgb(0, 0, 255), 0);
+//			al_draw_rectangle(x_min, y_max + 10, x_max + 16, y_max, al_map_rgb(0, 0, 255), 0);
 
-			// player position and velocity
-//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "x: %.2f", player.GetX());
-//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 25, 0, "y: %.2f", player.GetY());
-//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 45, 0, "x_vel: %.2f", player.GetXVel());
-//			al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 65, 0, "y_vel: %.2f", player.GetYVel());
+			// info
+			if (info == 1)
+			{
+				// player position and velocity
+				al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 5, 0, "x: %.2f", player.GetX());
+				al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 25, 0, "y: %.2f", player.GetY());
+				al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 45, 0, "x_vel: %.2f", player.GetXVel());
+				al_draw_textf(font, al_map_rgb(250, 250, 250), 15, 65, 0, "y_vel: %.2f", player.GetYVel());
 
-//			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 5, 0, "brick_1 y:   %.6f", brick_1.GetY());
-//			al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 25, 0, "terrain_1 y: %.6f", terrain_1.GetY());
-
+				al_draw_textf(font, al_map_rgb(250, 250, 250), 200, 5, 0, "state: %i", state);
+				if (pause == 1)
+					al_draw_text(font, al_map_rgb(250, 250, 250), 200, 25, 0, "paused");
+			}
 			// controls
 //			al_draw_textf(font, al_map_rgb(250, 250, 250), 100, 5, 0,
 //					"move with arrow keys");
@@ -807,6 +847,13 @@ int main(int argc, char** argv)
 	{
 		// just to get rid of the warning
 	}
+
+	//=================================
+	// CLEAN UP
+	//=================================
+	for (int i = 0; i < 3; i++)
+		delete[] pause_cursor_coords[i];
+	delete[] pause_cursor_coords;
 
 	al_destroy_display(display);
 	al_destroy_event_queue(event_queue);

@@ -4,6 +4,7 @@
 #include "peach_base.h"
 #include "IDrawable.h"
 #include "MenuItem.h"
+#include "MenuCursor.h"
 
 namespace peach
 {
@@ -11,22 +12,25 @@ namespace peach
 class Menu: public IDrawable
 {
 private:
-	int x;
-	int y;
+	float x;
+	float y;
 	int w;
 	int h;
-	std::vector<peach::MenuItem> menu_items;
+	std::vector<peach::MenuItem> items;
+	peach::MenuCursor* cursor;
+	int open;
 public:
 	Menu();
-	Menu(int x, int y, int w, int h, std::vector<peach::MenuItem> menu_items);
+	Menu(float x, float y, int w, int h, std::vector<peach::MenuItem> menu_items, peach::MenuCursor* cursor);
 	virtual ~Menu();
 
 	void Render();
 
 	void Open();
 	void Close();
-	void Select();
+	int Select();
 	void Back();
+	int HandleKeyboardInput(int keycode);
 
 	int GetX()
 	{
@@ -68,14 +72,14 @@ public:
 		Menu::h = h;
 	}
 
-	std::vector<peach::MenuItem> GetMenuItems()
+	std::vector<peach::MenuItem> GetItems()
 	{
-		return menu_items;
+		return items;
 	}
 
-	void SetMenuItems(std::vector<peach::MenuItem> menu_items)
+	void SetItems(std::vector<peach::MenuItem> items)
 	{
-		Menu::menu_items = menu_items;
+		Menu::items = items;
 	}
 
 };

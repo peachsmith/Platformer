@@ -11,13 +11,14 @@ namespace peach
 {
 
 MenuItem::MenuItem() :
-		text(""), x(0), y(0), font(0)
+		item_id(0), text(""), x(0), y(0), font(0)
 {
 
 }
 
-MenuItem::MenuItem(std::string text, int x, int y, void* font)
+MenuItem::MenuItem(int item_id, std::string text, int x, int y, void* font)
 {
+	MenuItem::item_id = item_id;
 	MenuItem::text = text;
 	MenuItem::x = x;
 	MenuItem::y = y;

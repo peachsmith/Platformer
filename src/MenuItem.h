@@ -10,16 +10,27 @@ namespace peach
 class MenuItem: public IDrawable
 {
 private:
+	int item_id;
 	std::string text;
 	int x;
 	int y;
 	void* font;
 public:
 	MenuItem();
-	MenuItem(std::string text, int x, int y, void* font);
+	MenuItem(int item_id, std::string text, int x, int y, void* font);
 	virtual ~MenuItem();
 
 	void Render();
+
+	int GetItemID()
+	{
+		return item_id;
+	}
+
+	void SetItemID(int item_id)
+	{
+		MenuItem::item_id = item_id;
+	}
 
 	std::string GetText()
 	{
