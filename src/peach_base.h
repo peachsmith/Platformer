@@ -16,7 +16,7 @@ namespace peach
 
 enum ID
 {
-	PLAYER, ENEMY, PROJECTILE, TERRAIN, SCENERY
+	PLAYER, ENEMY, PROJECTILE, TERRAIN, SCENERY, GOAL
 };
 enum keys
 {
@@ -24,7 +24,7 @@ enum keys
 };
 enum state
 {
-	NORMAL, PAUSE
+	START, PLAY, END
 };
 
 enum menu_item_id

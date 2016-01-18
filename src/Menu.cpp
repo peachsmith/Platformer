@@ -44,7 +44,7 @@ void Menu::Render()
 
 void Menu::Open()
 {
-	std::cout << "Menu::Open()" << std::endl;
+	//std::cout << "Menu::Open()" << std::endl;
 	cursor->ResetPosition();
 	if (open == 0)
 		open = 1;
@@ -52,7 +52,7 @@ void Menu::Open()
 
 void Menu::Close()
 {
-	std::cout << "Menu::Close()" << std::endl;
+	//std::cout << "Menu::Close()" << std::endl;
 	if (open == 1)
 		open = 0;
 }
@@ -70,7 +70,7 @@ int Menu::Select()
 
 void Menu::Back()
 {
-	std::cout << "Menu::Back()" << std::endl;
+	//std::cout << "Menu::Back()" << std::endl;
 }
 
 int Menu::HandleKeyboardInput(int keycode)

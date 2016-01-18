@@ -45,7 +45,8 @@ Entity::~Entity()
 
 void Entity::Render()
 {
-
+	al_draw_filled_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(50, 200, 50));
+	al_draw_rectangle(x, y, x + x_bound, y + y_bound, al_map_rgb(0, 0, 0), 1);
 }
 
 void Entity::Collide(int object_id)
