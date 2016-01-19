@@ -399,8 +399,10 @@ Level1::~Level1()
 void Level1::Render()
 {
 	goal.Render();
+	
 	for (unsigned int i = 0; i < drawables.size(); i++)
 		drawables[i]->Render();
+	
 //	for (unsigned int i = 0; i < collidables.size(); i++)
 //		collidables[i]->Render();
 }
@@ -668,6 +670,7 @@ void Level1::Update()
 			}
 		}
 	}
+
 } /* Update */
 
 void Level1::Load()
@@ -1007,7 +1010,6 @@ void Level1::Load()
 
 	goal.SetX(map_x + 360);
 	goal.SetY(map_y + 420);
-
 }
 
 } /* namespace peach */

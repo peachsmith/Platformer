@@ -159,7 +159,7 @@ int main(int argc, char** argv)
 	pause_items.push_back(poop_item);
 
 	int** pause_cursor_coords = new int*[2];
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 		pause_cursor_coords[i] = new int[2];
 
 	pause_cursor_coords[0][0] = pause_x + 35 - 15;
@@ -431,8 +431,9 @@ int main(int argc, char** argv)
 	//=================================
 	// CLEAN UP
 	//=================================
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 		delete[] pause_cursor_coords[i];
+
 	delete[] pause_cursor_coords;
 
 	al_destroy_display(display);
@@ -441,6 +442,6 @@ int main(int argc, char** argv)
 	al_destroy_font(font);
 	al_destroy_bitmap(player_sheet);
 	al_destroy_bitmap(scenery_sheet);
-
+	
 	return 0;
 }
