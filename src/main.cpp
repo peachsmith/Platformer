@@ -153,10 +153,10 @@ int main(int argc, char** argv)
 	vector<peach::MenuItem> pause_items;
 	peach::MenuItem resume_item(peach::PAUSE_MENU_RESUME, "resume", pause_x + 35, pause_y + 20, (void*) font);
 	peach::MenuItem quit_item(peach::PAUSE_MENU_QUIT, "quit", pause_x + 35, pause_y + 40, (void*) font);
-	peach::MenuItem poop_item(peach::PAUSE_MENU_INFO, "info", pause_x + 130, pause_y + 20, (void*) font);
+	peach::MenuItem info_item(peach::PAUSE_MENU_INFO, "info", pause_x + 130, pause_y + 20, (void*) font);
 	pause_items.push_back(resume_item);
 	pause_items.push_back(quit_item);
-	pause_items.push_back(poop_item);
+	pause_items.push_back(info_item);
 
 	int** pause_cursor_coords = new int*[2];
 	for (int i = 0; i < 2; i++)
