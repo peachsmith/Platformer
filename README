@@ -4,4 +4,6 @@
 
 a simple platformer using allegro 5
 
-Target Platform: Windows 10 64 - bit
+Target Platform(s):
+    64 bit Windows 10
+    64 bit Ubuntu 14.04
