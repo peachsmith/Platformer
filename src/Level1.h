@@ -2,7 +2,7 @@
 #define LEVEL1_H_
 
 #include "peach_base.h"
-#include "IDrawable.h"
+#include "ILevel.h"
 #include "Entity.h"
 #include "Player.h"
 #include "Terrain.h"
@@ -11,7 +11,7 @@
 namespace peach
 {
 
-class Level1: public IDrawable
+class Level1: public ILevel
 {
 private:
 	void* player_sheet;
@@ -221,6 +221,14 @@ public:
 	void Render();
 	void Update();
 	void Load();
+	int GetStatus()
+	{
+		return status;
+	}
+	void SetStatus(int status)
+	{
+		Level1::status = status;
+	}
 };
 
 } /* namespace peach */

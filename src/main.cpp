@@ -2,7 +2,9 @@
 #include "Player.h"
 #include "Terrain.h"
 #include "Scenery.h"
+#include "ILevel.h"
 #include "Level1.h"
+#include "Level2.h"
 #include "Menu.h"
 #include "pxp.h"
 
@@ -87,6 +89,10 @@ int main(int argc, char** argv)
 	// LEVELS
 	//=================================
 	peach::Level1 level_1((void*) player_sheet, (void*) scenery_sheet, &player, &state);
+	peach::Level2 level_2((void*) player_sheet, (void*) scenery_sheet, &player, &state);
+	peach::ILevel *levels[2] = {&level_1, &level_2};
+	int level_index = 0;
+	int max_level = 2;
 
 	//=================================
 	// CONFIGURATION
@@ -186,6 +192,22 @@ int main(int argc, char** argv)
 
 			if (state == peach::PLAY && pause == 0)
 			{
+				if(levels[level_index]->GetStatus() == 1)
+				{
+					levels[level_index]->SetStatus(0);
+					level_index++;
+					// load the next level
+					if(level_index < max_level)
+					{
+						player.SetX(300);
+						player.SetY(240);
+						player.SetXVel(0);
+						player.SetYVel(0);
+						player.SetJumping(false);
+						levels[level_index]->Load();
+					}
+				}
+
 				// move the player
 				if (keys[peach::LEFT] && !keys[peach::RIGHT])
 				{
@@ -203,7 +225,7 @@ int main(int argc, char** argv)
 					player.Jump();
 
 				// update positions, resolve collisions, scroll the screen
-				level_1.Update();
+				levels[level_index]->Update();
 
 			}
 			else if (state == peach::START)
@@ -287,7 +309,8 @@ int main(int argc, char** argv)
 				if (state == peach::START)
 				{
 					state = peach::PLAY;
-					level_1.Load();
+					level_index = 0;
+					levels[level_index]->Load();
 					player.SetX(300);
 					player.SetY(240);
 					player.SetXVel(0);
@@ -363,7 +386,7 @@ int main(int argc, char** argv)
 
 			if (state == peach::PLAY)
 			{
-				level_1.Render();
+				levels[level_index]->Render();
 			}
 			else if (state == peach::START)
 			{

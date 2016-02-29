@@ -24,7 +24,7 @@ enum keys
 };
 enum state
 {
-	START, PLAY, END
+	START, PLAY, LEVEL_1, LEVEL_2, END
 };
 
 enum menu_item_id

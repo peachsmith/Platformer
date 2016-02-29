@@ -439,8 +439,7 @@ void Level1::Update()
 				{
 					if (*state != peach::END)
 					{
-						//std::cout << "goal reached from the x direction" << std::endl;
-						*state = peach::END;
+						status = 1;
 					}
 					continue;
 				}
@@ -484,8 +483,7 @@ void Level1::Update()
 				{
 					if (*state != peach::END)
 					{
-						//std::cout << "goal reached from the y direction" << std::endl;
-						*state = peach::END;
+						status = 1;
 					}
 					continue;
 				}
@@ -677,6 +675,7 @@ void Level1::Load()
 {
 	map_x = 240;
 	map_y = 280;
+	status = 0;
 
 	terrain_1.SetX(map_x + 0);
 	terrain_2.SetX(map_x + 20);
